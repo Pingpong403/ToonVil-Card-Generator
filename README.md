@@ -2,7 +2,7 @@
 
 Clone this repository into the folder of your choice to start using it.
 
-## How to Use GitHub
+## How to Use Git
 Ensure you have Git installed on your system. [Here](https://git-scm.com/install/) is the installation page for Git.
 
 - On the command line in your system's shell (Terminal for MacOS, Command Prompt for Windows), navigate to the desired folder where you will store this generator.
