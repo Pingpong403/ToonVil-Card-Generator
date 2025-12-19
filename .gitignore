@@ -55,3 +55,4 @@ nunit-*.xml
 
 # Because souce code isn't important to (most) Villainous fans
 *.cs
+*.csproj
