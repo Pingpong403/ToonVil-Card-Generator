@@ -9,4 +9,4 @@ Spongebob Squarepants		5	Spongebob Squarepants cannot be defeated or discarded. 
 Filing Cabinet	2			Play the top card of the \Plan deck.	Item	Activate	1 Power			Villain	
 
 # Plan Deck
-Plan Z			Find and play King Neptune's Crown to Shell City. Move Spongebob Squarepants to the Krusty Krab.		Plan				1	Plan	1Power
+Plan Z			Find and play King Neptune's Crown to Shell City. Move Spongebob Squarepants to the Krusty Krab.		Plan			1		Plan	1Power
