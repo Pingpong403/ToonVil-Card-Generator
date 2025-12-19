@@ -1,0 +1,6 @@
+allyColor:de0022
+itemColor:45afe6
+effectColor:7ac424
+conditionColor:d3568d
+heroColor:e68c0a
+ornamentColor:d8b47f

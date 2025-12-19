@@ -1,0 +1,3 @@
+villainDeckPrefix:Villain
+fateDeckPrefix:Fate
+otherDeckNames:

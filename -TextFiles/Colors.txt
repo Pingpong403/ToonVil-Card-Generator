@@ -1,0 +1,4 @@
+# Start comment lines with the pound (#) symbol
+# Format keyword colors like this:
+# [Keyword]|[hexcode color]
+Plan|f1d592
