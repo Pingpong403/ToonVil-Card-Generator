@@ -12,3 +12,5 @@ Here is a list documenting every time I have asked AI a question and how it impa
 - creating more proper filepaths
 - getting center alignment for the text
 - reducing padding for the text
+- fixing error with float division
+- saving resized image, not original, to ImageIntermediary
