@@ -3,4 +3,5 @@ itemColor:45afe6
 effectColor:7ac424
 conditionColor:d3568d
 heroColor:e68c0a
-ornamentColor:d8b47f
+fontColor:d7b06c
+ornamentColor:d7b06c

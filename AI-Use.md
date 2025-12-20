@@ -9,4 +9,6 @@ Here is a list documenting every time I have asked AI a question and how it impa
 - using Path to build a proper filepath for intermediary text images
 - creating a FontLoader helper class
 - using "using" correctly
-- creating proper filepaths
+- creating more proper filepaths
+- getting center alignment for the text
+- reducing padding for the text
