@@ -54,5 +54,6 @@ TestResult.xml
 nunit-*.xml
 
 # Because souce code isn't important to (most) Villainous fans
-*.cs
+# *.cs <- uncomment and delete these for release
 *.csproj
+*.sln
