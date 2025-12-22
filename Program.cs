@@ -18,5 +18,7 @@ class Program
 		PrepareText.DrawText("5", elementFont, textColor, 1286, "Strength");
 
 		PrepareImage.SizeImage("Spongebob Squarepants");
+
+        PrepareImage.CombineImages("Spongebob Squarepants", "Fate");
     }
 }

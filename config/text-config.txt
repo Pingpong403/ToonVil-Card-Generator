@@ -1,4 +1,4 @@
 escapeCharacter:\
-italicsCharacter:*
+italicCharacter:*
 boldCharacter:$
 newLineCharacter:\n
