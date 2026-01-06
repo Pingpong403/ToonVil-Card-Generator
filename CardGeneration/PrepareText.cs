@@ -65,7 +65,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			if (centerAlign)
 			{
 				// For center alignment, use full width
-				drawing.DrawString(text, font, textBrush, new RectangleF(0, 0, width, height), sf);
+				drawing.DrawString(text, font, textBrush, new RectangleF(3, 8, width, height), sf);
 			}
 			else
 			{
