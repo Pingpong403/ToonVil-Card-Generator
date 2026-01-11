@@ -1,4 +1,5 @@
 using ToonVil_Card_Generator.CardGeneration;
+using static ToonVil_Card_Generator.CardGeneration.PrepareText;
 using System.Drawing;
 using System.Reflection;
 
@@ -8,43 +9,91 @@ class Program
 {
     static void Main(string[] args)
     {
+        // TESTING
+        // Font font = FontLoader.GetFont("cartoonToyTurbo.otf", 80);
+        // string[] subjects =
+        // {
+        //     "Menace",
+        //     "Menace menace",
+        //     "Menace Menace",
+        //     "I am not your queen"
+        // };
+        // foreach (string subject in subjects)
+        // {
+        //     Console.Write($"{subject} -> ");
+        //     foreach (int length in PrepareText.GetWordLengths(subject, font, 1286))
+        //     {
+        //         Console.Write($"{length} ");
+        //     }
+        //     Console.WriteLine();
+        //     Console.WriteLine();
+        // }
+        // return;
+
         Console.WriteLine("ToonVil Card Generator");
+
+        // Load all the fonts
+        // string titleFontFile = ConfigHelper.GetConfigValue("card", "titleFont");
+        // int titleFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "titleFontSize"));
+        // string abilityFontFile = ConfigHelper.GetConfigValue("card", "abilityFont");
+        // int abilityFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "abilityFontSize"));
+        // string elementFontFile = ConfigHelper.GetConfigValue("card", "elementFont");
+        // int costFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "costFontSize"));
+        // int strengthFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "strengthFontSize"));
+        // int topRightFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "topRightFontSize"));
+        // int bottomRightFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "bottomRightFontSize"));
+        // string typeFontFile = ConfigHelper.GetConfigValue("card", "typeFont");
+        // int typeFontSize = int.Parse(ConfigHelper.GetConfigValue("card", "typeFontSize"));
+        // Font titleFont = FontLoader.GetFont(titleFontFile, titleFontSize);
+		// Font abilityFont = FontLoader.GetFont(abilityFontFile, abilityFontSize);
+        // Font typeFont = FontLoader.GetFont(typeFontFile, typeFontSize);
+		// Font costFont = FontLoader.GetFont(elementFontFile, costFontSize);
+        // Font strengthFont = FontLoader.GetFont(elementFontFile, strengthFontSize);
+        // Font topRightFont = FontLoader.GetFont(elementFontFile, topRightFontSize);
+        // Font bottomRightFont = FontLoader.GetFont(elementFontFile, bottomRightFontSize);
+
+        // Load all the keywords and their colors
+        Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();
+        List<CardWord> cardWords = PrepareText.GetCardWords("Ally", new SolidBrush(Color.Black), FontLoader.GetFont("roboto.ttf", 100), keywordsAndColors);
+        foreach (CardWord word in cardWords)
+        {
+            Console.Write(word.GetText());
+            Console.Write(word.GetTextFont().GetHashCode());
+            Console.WriteLine();
+        }
 
         // TEMPORARY
 
         // Setup
-        Font titleFont = FontLoader.GetFont("candyBeans.otf", 110);
-		Font abilityFont = FontLoader.GetFont("cartoonToyTurbo.otf", 80);
-		Font elementFont = FontLoader.GetFont("candyBeans.otf", 110);
-        Color textColor = ColorTranslator.FromHtml("#d7b06c");
-        PrepareImage.SizeIcon();
-        PrepareImage.CleanIntermediaries();
+        // Color textColor = ColorTranslator.FromHtml("#d7b06c");
+        // PrepareImage.SizeIcon();
+        // PrepareImage.CleanIntermediaries();
 
-        // Spongebob Squarepants
-        PrepareText.DrawText("Spongebob Squarepants", titleFont, textColor, 1286, "Title");
-		PrepareText.DrawText("Spongebob Squarepants cannot be defeated or discarded. If $Plankton$ is at Spongebob Squarepants' location, the cost to play Allies is increased by 2 Power.", abilityFont, textColor, 1286, "Ability");
-		PrepareText.DrawText("5", elementFont, textColor, 1286, "Strength");
-		PrepareImage.SizeCardImage("Spongebob Squarepants");
-        PrepareImage.CombineImages("Spongebob Squarepants", "Fate");
-        PrepareImage.CleanIntermediaries();
+        // // Spongebob Squarepants
+        // PrepareText.DrawText("Spongebob Squarepants", titleFont, textColor, 1230, "Title");
+		// PrepareText.DrawText("Spongebob Squarepants cannot be defeated or discarded. If $Plankton$ is at Spongebob Squarepants' location, the cost to play Allies is increased by 2 Power.", abilityFont, textColor, 1230, "Ability");
+		// PrepareText.DrawText("5", strengthFont, textColor, 1230, "Strength");
+		// PrepareImage.SizeCardImage("Spongebob Squarepants");
+        // PrepareImage.CombineImages("Spongebob Squarepants", "Fate");
+        // PrepareImage.CleanIntermediaries();
 
-        // Filing Cabinet
-        PrepareText.DrawText("Filing Cabinet", titleFont, textColor, 1286, "Title");
-		PrepareText.DrawText("Play the top card of the \\Plan deck.", abilityFont, textColor, 1286, "Ability");
-		PrepareText.DrawText("2", elementFont, textColor, 1286, "Cost");
-		PrepareImage.SizeCardImage("Filing Cabinet");
-        PrepareImage.CombineImages("Filing Cabinet", "Villain");
-        PrepareImage.CleanIntermediaries();
+        // // Filing Cabinet
+        // PrepareText.DrawText("Filing Cabinet", titleFont, textColor, 1230, "Title");
+		// PrepareText.DrawText("Play the top card of the \\Plan deck.", abilityFont, textColor, 1230, "Ability");
+		// PrepareText.DrawText("2", costFont, textColor, 1230, "Cost");
+		// PrepareImage.SizeCardImage("Filing Cabinet");
+        // PrepareImage.CombineImages("Filing Cabinet", "Villain");
+        // PrepareImage.CleanIntermediaries();
 
-        // Plan Z
-        PrepareText.DrawText("Plan Z", titleFont, textColor, 1286, "Title");
-		PrepareText.DrawText("Find and play King Neptune's Crown to Shell City. Move Spongebob Squarepants to the Krusty Krab.", abilityFont, textColor, 1286, "Ability");
-		PrepareText.DrawText("1", elementFont, textColor, 1286, "TopRightElement");
-		PrepareImage.SizeCardImage("Plan Z");
-        PrepareImage.CombineImages("Plan Z", "Plan");
-        PrepareImage.CleanIntermediaries();
+        // // Plan Z
+        // PrepareText.DrawText("Plan Z", titleFont, textColor, 1230, "Title");
+		// PrepareText.DrawText("Find and play King Neptune's Crown to Shell City. Move Spongebob Squarepants to the Krusty Krab.", abilityFont, textColor, 1230, "Ability");
+		// PrepareText.DrawText("1", topRightFont, textColor, 1230, "TopRightElement");
+		// PrepareImage.SizeCardImage("Plan Z");
+        // PrepareImage.CombineImages("Plan Z", "Plan");
+        // PrepareImage.CleanIntermediaries();
 
-        // Cleanup
-        PrepareImage.CleanIntermediariesFinal();
+        // // Cleanup
+        // PrepareImage.CleanIntermediariesFinal();
     }
 }

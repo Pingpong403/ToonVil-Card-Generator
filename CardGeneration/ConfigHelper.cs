@@ -5,14 +5,20 @@ namespace ToonVil_Card_Generator.CardGeneration
 {
 	public static class ConfigHelper
 	{
-		// card-config.txt helpers
+		/// <summary>
+		/// Get the value of a config element.
+		/// </summary>
+		/// <param name="configFile">The file to be searched, not including the "-config.txt".</param>
+		/// <param name="key">The key whose value you seek.</param>
+		/// <returns>The value, if any, corresponding to the key in the given file.</returns>
+		/// <exception cref="FileNotFoundException"></exception>
 		public static string GetConfigValue(string configFile, string key)
 		{
-			string path = PathHelper.GetFullPath($"config\\{configFile}");
+			string path = PathHelper.GetFullPath($"config\\{configFile}-config.txt");
 			if (!File.Exists(path))
             {
                 // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "config", configFile));
+                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "config", configFile + "-config.txt"));
             }
             if (!File.Exists(path))
             {
@@ -52,6 +58,58 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 			
 			return "";
+		}
+
+		/// <summary>
+		/// Gets every key, value pair in a given config file.
+		/// </summary>
+		/// <param name="configFile">The file to be searched, not including the "-config.txt".</param>
+		/// <returns>All key, value pairs found in the file.</returns>
+		/// <exception cref="FileNotFoundException"></exception>
+		public static Dictionary<string, string> GetAllValues(string configFile)
+		{
+			string path = PathHelper.GetFullPath($"config\\{configFile}-config.txt");
+			if (!File.Exists(path))
+            {
+                // Fallback to current working dir (e.g., when running with dotnet run from project root)
+                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "config", configFile + "-config.txt"));
+            }
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException($"Config file not found: {path}");
+            }
+
+			Dictionary<string, string> pairs = new Dictionary<string, string>();
+			string line;
+			try
+			{
+				// Pass the file path to the StreamReader constructor
+				StreamReader sr = new StreamReader(path);
+
+				// Read the first line of text
+				line = sr.ReadLine();
+
+				//Continue to read until you reach end of file
+				while (line != null)
+				{
+					// Split line into key, value pair
+					string[] pair = line.Split(":");
+
+					// Assign to dictionary
+					pairs[pair[0]] = pair[1];
+
+					// Read the next line
+					line = sr.ReadLine();
+				}
+				//close the file
+				sr.Close();
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Exception: " + e.Message);
+			}
+			
+			return pairs;
 		}
 	}
 }

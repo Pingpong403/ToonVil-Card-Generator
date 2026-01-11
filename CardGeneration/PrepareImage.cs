@@ -88,7 +88,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			using Image img = Image.FromFile(fullPath);
 
 			// Calculate new width and height using float math to avoid integer truncation
-			float targetHeight = float.Parse(ConfigHelper.GetConfigValue("card-config.txt", "imageAreaHeight"), CultureInfo.InvariantCulture);
+			float targetHeight = float.Parse(ConfigHelper.GetConfigValue("card", "imageAreaHeight"), CultureInfo.InvariantCulture);
 			float ratio = targetHeight / img.Height;
 			int newWidth = Math.Max(1, (int)Math.Round(ratio * img.Width));
 			int newHeight = Math.Max(1, (int)Math.Round(ratio * img.Height));
@@ -139,8 +139,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 			var iconPath = Path.Combine(imageIntermediaryPath, "icon.png");
 			var bottomRightElementPath = Path.Combine(textIntermediaryPath, "BottomRightElement.png");
 
-			int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card-config.txt", "w"));
-			int cardHeight = int.Parse(ConfigHelper.GetConfigValue("card-config.txt", "h"));
+			int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card", "w"));
+			int cardHeight = int.Parse(ConfigHelper.GetConfigValue("card", "h"));
 			using Bitmap b = new Bitmap(cardWidth, cardHeight);
 			using Graphics g = Graphics.FromImage(b);
 			g.InterpolationMode = InterpolationMode.HighQualityBicubic;

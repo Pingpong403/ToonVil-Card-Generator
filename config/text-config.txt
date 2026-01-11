@@ -1,4 +1,3 @@
-escapeCharacter:\
 italicCharacter:*
-boldCharacter:$
-newLineCharacter:\n
+escapeCharacter:\
+newlineCharacter:%
