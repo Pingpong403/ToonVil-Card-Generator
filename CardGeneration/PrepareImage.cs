@@ -61,7 +61,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, "icon.png");
 			b.Save(outpath, ImageFormat.Png);
-			Console.WriteLine($"Icon resized and saved: {outpath}");
 		}
 
 		/// <summary>
@@ -113,7 +112,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, $"{imageName}.png");
 			b.Save(outpath, ImageFormat.Png);
-			Console.WriteLine($"Image resized and saved: {outpath}");
 		}
 
 		/// <summary>
@@ -179,20 +177,20 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// Title
 			using (Image titleImg = Image.FromFile(titlePath))
 			{
-				g.DrawImage(titleImg, cardWidth / 2 - titleImg.Width / 2, 1152 - titleImg.Height / 2);
+				g.DrawImage(titleImg, (cardWidth - titleImg.Width) / 2, 1152 - titleImg.Height / 2);
 			}
 			
 			// Ability
 			using (Image abilityImg = Image.FromFile(abilityPath))
 			{
-				g.DrawImage(abilityImg, cardWidth / 2 - abilityImg.Width / 2, 1629 - abilityImg.Height / 2);
+				g.DrawImage(abilityImg, (cardWidth - abilityImg.Width) / 2, 1618 - abilityImg.Height / 2);
 			}
 
 			// Type
-			// using (Image typeImg = Image.FromFile(typePath))
-			// {
-			// 	g.DrawImage(typeImg, 1, 1);
-			// }
+			using (Image typeImg = Image.FromFile(typePath))
+			{
+				g.DrawImage(typeImg, (cardWidth - typeImg.Width) / 2, 1986 - typeImg.Height / 2);
+			}
 			
 			// Strength
 			if (File.Exists(strengthPath))
@@ -249,7 +247,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, $"{cardTitle}.png");
 			b.Save(outpath, ImageFormat.Png);
-			Console.WriteLine($"Card saved: {outpath}");
+			Console.WriteLine($"Image saved: {cardTitle}");
 		}
 
 		/// <summary>
