@@ -15,48 +15,13 @@ namespace ToonVil_Card_Generator.CardGeneration
 		{
 			HashSet<string> keywords = new HashSet<string>();
 
-			// Keywords.txt should hold all of the keywords
-			string path = PathHelper.GetFullPath("-TextFiles\\Keywords.txt");
-			if (!File.Exists(path))
-            {
-                // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "-TextFiles", "Keywords.txt"));
-            }
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException($"Keyword file not found: {path}");
-            }
-
-			string line;
-			try
+			foreach (string line in MiscHelper.GetTextFilesLines("Keywords"))
 			{
-				// Pass the file path to the StreamReader constructor
-				StreamReader sr = new StreamReader(path);
+				// Split line individual keywords
+				string[] variations = line.Split("|");
 
-				// Read the first line of text
-				line = sr.ReadLine();
-
-				// Continue to read until you reach end of file
-				while (line != null)
-				{
-					// '#' denotes a comment line
-					if (line[0] != '#')
-					{
-						// Split line individual keywords
-						string[] variations = line.Split("|");
-
-						// Add each to hashset
-						foreach (string variation in variations) keywords.Add(variation);
-					}
-					// Read the next line
-					line = sr.ReadLine();
-				}
-				// Close the file
-				sr.Close();
-			}
-			catch(Exception e)
-			{
-				Console.WriteLine("Exception: " + e.Message);
+				// Add each to hashset
+				foreach (string variation in variations) keywords.Add(variation);
 			}
 
 			return keywords;
@@ -68,9 +33,11 @@ namespace ToonVil_Card_Generator.CardGeneration
 			Dictionary<string, string> keywordsAndColors = new Dictionary<string, string>();
 
 			// Populate dictionary to hold each singular keyword and its corresponding color
-			foreach (string line in MiscHelper.GetLines("Colors"))
+			foreach (string line in MiscHelper.GetTextFilesLines("Colors"))
 			{
 				string[] lineSplit = line.Split("|");
+				// If color exists in -TextFiles\Colors.txt, use that color.
+				// If not, use color found in config\color-config.txt
 				if (lineSplit.Length == 1)
 				{
 					// Search through color-config.txt for correct color
@@ -85,7 +52,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 
 			// Link each keyword variant to its singular form and therefore its correct color
-			foreach (string line in MiscHelper.GetLines("Keywords"))
+			foreach (string line in MiscHelper.GetTextFilesLines("Keywords"))
 			{
 				string[] lineSplit = line.Split("|");
 				foreach (string variant in lineSplit)

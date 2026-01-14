@@ -10,11 +10,11 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <param name="file">The file to be searched, not including the extension.</param>
 		/// <returns>Each non-comment line found in the file.</returns>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static List<string> GetLines(string file)
+		public static List<string> GetTextFilesLines(string file)
 		{
 			List<string> lines = [];
 
-			string path = PathHelper.GetFullPath("-TextFiles\\" + file + ".txt");
+			string path = PathHelper.GetFullPath("data\\-TextFiles\\" + file + ".txt");
 			if (!File.Exists(path))
             {
                 // Fallback to current working dir (e.g., when running with dotnet run from project root)

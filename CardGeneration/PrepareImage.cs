@@ -19,15 +19,17 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static void SizeIcon()
 		{
 			// Get image into an object - look for png first, then jpg, then jpeg
-			var baseDir = AppContext.BaseDirectory;
-            var fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Images", "icon.png"));
+			var relativePath = Path.Combine("data", "-Images", "icon.png");
+            var fullPath = PathHelper.GetFullPath(relativePath);
 			if (!File.Exists(fullPath))
 			{
-				fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Images", "icon.jpg"));
+				relativePath = Path.Combine("data", "-Images", "icon.jpg");
+				fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			if (!File.Exists(fullPath))
 			{
-				fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Images", "icon.jpeg"));
+				relativePath = Path.Combine("data", "-Images", "icon.jpeg");
+				fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			// If no image is found, exit
 			if (!File.Exists(fullPath))
@@ -54,8 +56,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 			g.DrawImage(icon, 0, 0, newWidth, newHeight);
 
 			// Ensure output directory exists and save resized PNG
-			var imgBaseDir = AppContext.BaseDirectory;
-            var outDir = Path.GetFullPath(Path.Combine(imgBaseDir, "..", "..", "..", "ImageIntermediary"));
+			var relativeOutDir = Path.Combine("temp", "ImageIntermediary");
+            var outDir = PathHelper.GetFullPath(relativeOutDir);
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, "icon.png");
 			b.Save(outpath, ImageFormat.Png);
@@ -70,24 +72,26 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static void SizeCardImage(String imageName)
 		{
 			// Get image into an object - look for png first, then jpg, then jpeg
-			var baseDir = AppContext.BaseDirectory;
-            var fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Images", imageName + ".png"));
+			var relativePath = Path.Combine("data", "-Images", imageName + ".png");
+            var fullPath = PathHelper.GetFullPath(relativePath);
 			if (!File.Exists(fullPath))
 			{
-				fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Images", imageName + ".jpg"));
+				relativePath = Path.Combine("data", "-Images", imageName + ".jpg");
+                fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			if (!File.Exists(fullPath))
 			{
-				fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Images", imageName + ".jpeg"));
+				relativePath = Path.Combine("data", "-Images", imageName + ".jpeg");
+                fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			// If no image is found, continue on with black background
 			if (!File.Exists(fullPath))
 			{
-				fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "assets", "black_bg.png"));
+				relativePath = Path.Combine("assets", "black_bg.png");
+				fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			using Image img = Image.FromFile(fullPath);
 
-			// Calculate new width and height using float math to avoid integer truncation
 			float targetHeight = float.Parse(ConfigHelper.GetConfigValue("card", "imageAreaHeight"), CultureInfo.InvariantCulture);
 			float ratio = targetHeight / img.Height;
 			int newWidth = Math.Max(1, (int)Math.Round(ratio * img.Width));
@@ -104,8 +108,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 			g.DrawImage(img, 0, 0, newWidth, newHeight);
 
 			// Ensure output directory exists and save resized PNG
-			var imgBaseDir = AppContext.BaseDirectory;
-            var outDir = Path.GetFullPath(Path.Combine(imgBaseDir, "..", "..", "..", "ImageIntermediary"));
+			var relativeOutDir = Path.Combine("temp", "ImageIntermediary");
+            var outDir = PathHelper.GetFullPath(relativeOutDir);
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, $"{imageName}.png");
 			b.Save(outpath, ImageFormat.Png);
@@ -120,11 +124,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <param name="deck">What deck the card belongs to (Villain, Fate, etc.)</param>
 		public static void CombineImages(string cardTitle, string deck)
 		{
-			var combineBaseDir = AppContext.BaseDirectory;
-			var imageIntermediaryPath = Path.GetFullPath(Path.Combine(combineBaseDir, "..", "..", "..", "ImageIntermediary"));
-			var textIntermediaryPath = Path.GetFullPath(Path.Combine(combineBaseDir, "..", "..", "..", "TextIntermediary"));
-			var layoutPath = Path.GetFullPath(Path.Combine(combineBaseDir, "..", "..", "..", "-Layout"));
-			var assetsPath = Path.GetFullPath(Path.Combine(combineBaseDir, "..", "..", "..", "assets"));
+			var imageIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "ImageIntermediary"));
+			var textIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "TextIntermediary"));
+			var layoutPath = PathHelper.GetFullPath(Path.Combine("data", "-Layout"));
+			var assetsPath = PathHelper.GetFullPath("assets");
 
 			// Possible necessary elements: image, Title, Ability, Type,
 			// Cost, Strength, TopRightElement, BottomRightElement
@@ -148,6 +151,13 @@ namespace ToonVil_Card_Generator.CardGeneration
 			g.SmoothingMode = SmoothingMode.HighQuality;
 			g.CompositingQuality = CompositingQuality.HighQuality;
 
+
+
+			// Only draw any elements if all of the necessary elements are present
+			// Necessary elements: Title, Ability, Type
+
+
+
 			string capitalizedDeck = MiscHelper.Capitalize(deck);
 			// Card image
 			bool imageExists = File.Exists(imagePath);
@@ -167,16 +177,22 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 
 			// Title
-			using (Image titleImg = Image.FromFile(Path.Combine(textIntermediaryPath, "Title.png")))
+			using (Image titleImg = Image.FromFile(titlePath))
 			{
 				g.DrawImage(titleImg, cardWidth / 2 - titleImg.Width / 2, 1152 - titleImg.Height / 2);
 			}
 			
 			// Ability
-			using (Image abilityImg = Image.FromFile(Path.Combine(textIntermediaryPath, "Ability.png")))
+			using (Image abilityImg = Image.FromFile(abilityPath))
 			{
-				g.DrawImage(abilityImg, cardWidth / 2 - abilityImg.Width / 2, 1541 - abilityImg.Height / 2);
+				g.DrawImage(abilityImg, cardWidth / 2 - abilityImg.Width / 2, 1629 - abilityImg.Height / 2);
 			}
+
+			// Type
+			// using (Image typeImg = Image.FromFile(typePath))
+			// {
+			// 	g.DrawImage(typeImg, 1, 1);
+			// }
 			
 			// Strength
 			if (File.Exists(strengthPath))
@@ -184,7 +200,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Strength.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 				using (Image strImg = Image.FromFile(strengthPath))
 				{
-					g.DrawImage(strImg, 139 - strImg.Width / 2, cardHeight - 139 - strImg.Height / 2);
+					g.DrawImage(strImg, 145 - strImg.Width / 2, cardHeight - 139 - strImg.Height / 2);
 				}
 			}
 			
@@ -194,7 +210,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Cost.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 				using (Image costImg = Image.FromFile(costPath))
 				{
-					g.DrawImage(costImg, 187 - costImg.Width / 2, 191 - costImg.Height / 2);
+					g.DrawImage(costImg, 193 - costImg.Width / 2, 191 - costImg.Height / 2);
 				}
 			}
 
@@ -204,7 +220,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "TopRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 				using (Image topRightImg = Image.FromFile(topRightElementPath))
 				{
-					g.DrawImage(topRightImg, cardWidth - 186 - topRightImg.Width / 2, 195 - topRightImg.Height / 2);
+					g.DrawImage(topRightImg, cardWidth - 192 - topRightImg.Width / 2, 195 - topRightImg.Height / 2);
 				}
 			}
 
@@ -228,8 +244,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 
 			// Ensure output directory exists and save completed card
-			var baseDir = AppContext.BaseDirectory;
-            var outDir = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "-Exports"));
+			var relativeOutDir = Path.Combine("data", "-Exports");
+            var outDir = PathHelper.GetFullPath(relativeOutDir);
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, $"{cardTitle}.png");
 			b.Save(outpath, ImageFormat.Png);
@@ -241,9 +257,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// </summary>
 		public static void CleanIntermediaries()
 		{
-			var cleanBaseDir = AppContext.BaseDirectory;
-			var imageIntermediaryPath = Path.GetFullPath(Path.Combine(cleanBaseDir, "..", "..", "..", "ImageIntermediary"));
-			var textIntermediaryPath = Path.GetFullPath(Path.Combine(cleanBaseDir, "..", "..", "..", "TextIntermediary"));
+			var imageIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "ImageIntermediary"));
+			var textIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "TextIntermediary"));
 
 			var imageIntermediaryDI = new DirectoryInfo(imageIntermediaryPath);
 			foreach (FileInfo fi in imageIntermediaryDI.EnumerateFiles())
@@ -258,12 +273,12 @@ namespace ToonVil_Card_Generator.CardGeneration
 		}
 
 		/// <summary>
-		/// Cleans all images in the intermediaries, including the icon.
+		/// Cleans all images in the image intermediary, including the icon.
 		/// </summary>
-		public static void CleanIntermediariesFinal()
+		public static void CleanImageIntermediaryFinal()
 		{
-			var cleanBaseDir = AppContext.BaseDirectory;
-			var imageIntermediaryPath = Path.GetFullPath(Path.Combine(cleanBaseDir, "..", "..", "..", "ImageIntermediary"));
+			var relativePath = Path.Combine("temp", "ImageIntermediary");
+			var imageIntermediaryPath = PathHelper.GetFullPath(relativePath);
 
 			var imageIntermediaryDI = new DirectoryInfo(imageIntermediaryPath);
 			foreach (FileInfo fi in imageIntermediaryDI.EnumerateFiles())

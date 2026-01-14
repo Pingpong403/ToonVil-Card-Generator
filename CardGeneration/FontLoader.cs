@@ -14,9 +14,8 @@ namespace ToonVil_Card_Generator.CardGeneration
         // Loads an OTF/TTF from the project fonts folder and creates a Font
         public static Font GetFont(string fontFileName, float size, FontStyle style = FontStyle.Regular, GraphicsUnit unit = GraphicsUnit.Pixel)
         {
-            // Resolve to project fonts folder (bin/Debug/{tfm} -> ../../../fonts)
-            var baseDir = AppContext.BaseDirectory;
-            var fontPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "fonts", fontFileName));
+            var relativePath = Path.Combine("fonts", fontFileName);
+            var fontPath = PathHelper.GetFullPath(relativePath);
 
             if (!File.Exists(fontPath))
             {

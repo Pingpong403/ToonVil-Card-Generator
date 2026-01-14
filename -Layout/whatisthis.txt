@@ -1,2 +1,0 @@
--Layout is where you put the card and element backgrounds for your cards.
-Cards will be built by putting the correct elements first, then the text you want in them.

@@ -14,4 +14,5 @@ Here is a list documenting every time I have asked AI a question and how it impa
 - reducing padding for the text
 - fixing error with float division
 - saving resized image, not original, to ImageIntermediary
-- found why files were being used when trying to delete
+- finding why files were being used when trying to delete
+- removing excess padding from words

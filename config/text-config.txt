@@ -1,3 +1,4 @@
 italicCharacter:*
 escapeCharacter:\
 newlineCharacter:%
+assetCharacter:_
