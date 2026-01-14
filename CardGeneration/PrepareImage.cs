@@ -153,8 +153,11 @@ namespace ToonVil_Card_Generator.CardGeneration
 
 			// Only draw any elements if all of the necessary elements are present
 			// Necessary elements: Title, Ability, Type
-
-
+			if (!(File.Exists(titlePath) && File.Exists(abilityPath) && File.Exists(typePath)))
+			{
+				Console.WriteLine($"Missing elements for {cardTitle}!");
+				return;
+			}
 
 			string capitalizedDeck = MiscHelper.Capitalize(deck);
 			// Card image

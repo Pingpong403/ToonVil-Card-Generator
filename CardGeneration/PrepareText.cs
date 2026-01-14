@@ -66,7 +66,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 						font = new Font(font.Name, currentFontSize, font.Style);
 					}
 				} while (textHeight > maxHeight);
-				Console.WriteLine($"Font size: {currentFontSize}");
 			}
 			else
 			{
@@ -161,93 +160,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 				}
 				line++;
 			}
-
-			drawing.Save();
-
-			textBrush.Dispose();
-			drawing.Dispose();
-
-			// Ensure output directory exists and save per-element PNG
-			var relativeOutDir = Path.Combine("temp", "TextIntermediary");
-            var outDir = PathHelper.GetFullPath(relativeOutDir);
-			Directory.CreateDirectory(outDir);
-			var outpath = Path.Combine(outDir, $"{element}.png");
-			img.Save(outpath, ImageFormat.Png);
-			img.Dispose();
-		}
-
-		// summary
-		public static void DrawTextTest(String text, Font font, Color textColor, int maxWidth, int maxHeight, string element, Dictionary<string, string> keywordsAndColors)
-		{
-			// First, if it is a Title, capitalize the text
-			if (string.Equals(element.ToLower(), "title") || string.Equals(element.ToLower(), "type"))
-			{
-				text = text.ToUpper();
-			}
-
-			// Clean the text
-			text = GetCleanText(text);
-
-			// Set the stringformat flags and trimming
-			StringFormat sf = StringFormat.GenericTypographic;
-			sf.Trimming = StringTrimming.Word;
-			sf.Alignment = StringAlignment.Center;
-			sf.LineAlignment = StringAlignment.Center;
-
-			// Create a new image of the right size for our graphics
-			Image img = new Bitmap(maxWidth, maxHeight);
-			Graphics drawing = Graphics.FromImage(img);
-
-			// Use high quality everything
-			drawing.CompositingQuality = CompositingQuality.HighQuality;
-			drawing.InterpolationMode = InterpolationMode.HighQualityBilinear;
-			drawing.PixelOffsetMode = PixelOffsetMode.HighQuality;
-			drawing.SmoothingMode = SmoothingMode.HighQuality;
-			drawing.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-			
-			// Paint a transparent background
-			drawing.Clear(Color.Transparent);
-
-			// Create a brush for the text
-			Brush textBrush = new SolidBrush(textColor);
-
-			// Find the proper font size or squish ratio for given text
-			int textHeight;
-			if (element != "Ability") textHeight = (int)Math.Ceiling(drawing.MeasureString(text, font, 100000, sf).Height);
-			else textHeight = (int)Math.Ceiling(drawing.MeasureString(text, font, maxWidth, sf).Height);
-			float granularity = 0.5F;
-			if (element == "Ability")
-			{
-				float currentFontSize = font.Size;
-				// Naively find maximum font size to fit text
-				do
-				{
-					SizeF currentSize = drawing.MeasureString(text, font, maxWidth, sf);
-					textHeight = (int)Math.Ceiling(currentSize.Height);
-					if (textHeight > maxHeight)
-					{
-						currentFontSize = font.Size - granularity;
-						font = new Font(font.Name, currentFontSize, font.Style);
-					}
-				} while (textHeight > maxHeight);
-				Console.WriteLine($"Font size: {currentFontSize}");
-			}
-			else
-			{
-				int textFullWidth = (int)drawing.MeasureString(text, font, 100000, sf).Width;
-				if (textFullWidth > maxWidth)
-				{
-					float horizontalSquish = (float)maxWidth / textFullWidth;
-					drawing.ScaleTransform(horizontalSquish, 1.0F);
-					maxWidth = (int)textFullWidth;
-				}
-			}
-
-			// Set up variables
-			int startY = (maxHeight - textHeight) / 2;
-
-			// Draw text
-			drawing.DrawString(text, font, textBrush, new RectangleF(0, startY, maxWidth, maxHeight), sf);
 
 			drawing.Save();
 

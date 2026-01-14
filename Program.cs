@@ -35,6 +35,8 @@ class Program
         // Load all the keywords and their colors
         Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();
 
+        // Go through each line of Cards.txt and build cards
+
         // TEMPORARY
 
         // Setup
@@ -43,8 +45,8 @@ class Program
         CleanIntermediaries();
 
         // Spongebob Squarepants
-        DrawText("Spongebob Squarepants the Sponge Detective", titleFont, textColor, 1230, 166, "Title", keywordsAndColors);
-		DrawText("Spongebob Squarepants the Sponge Detective is locked to Plankton's Universe. Spongebob Squarepants the Sponge Detective cannot be defeated or discarded. If Plankton is at Spongebob Squarepants the Sponge Detective's location, the cost to play Allies is increased by 2 Power. When Plankton plays Effects, instead of paying their cost, he places a Power from the Supply on Spongebob Squarepants the Sponge Detective. When Spongebob Squarepants the Sponge Detective has 5 Power on him, Plankton must pay 10 Power. If he does, he wins the game. If he does not, instead place Spongebob Squarepants the Sponge Detective on top of the Fate Deck.", abilityFont, textColor, 1230, 668, "Ability", keywordsAndColors);
+        DrawText("Spongebob Squarepants", titleFont, textColor, 1230, 166, "Title", keywordsAndColors);
+		DrawText("Spongebob Squarepants cannot be defeated or discarded. DividingLine_ Plankton: The cost to play Allies is increased by 2 Power.", abilityFont, textColor, 1230, 668, "Ability", keywordsAndColors);
 		DrawText("5", strengthFont, textColor, 1230, 690, "Strength", keywordsAndColors);
         DrawText("Hero", typeFont, textColor, 1230, 690, "Type", keywordsAndColors);
 		SizeCardImage("Spongebob Squarepants");
