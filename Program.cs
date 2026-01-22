@@ -77,7 +77,7 @@ class Program
 
         // John Doe - test
         DrawTitle("John Doe", titleFont, textColor, 1230, 166);
-		DrawAbility("Die. DividingLine_ Player: Die, but more glamorously.", "", "", "", abilityFont, textColor, 1230, 668, keywordsAndColors);
+		DrawAbility("John Doe cannot be defeated. DividingLine_ Player: You may not gain Power by any means.", "Find and play Nemesis to John Doe's location. % This location gains:", "Pay 2 Power", "MoveHero", abilityFont, textColor, 1230, 668, keywordsAndColors);
 		DrawText("5", strengthFont, textColor, 1230, 690, "Strength", keywordsAndColors);
         DrawText("Hero", typeFont, textColor, 1230, 690, "Type", keywordsAndColors);
 		SizeCardImage("John Doe");

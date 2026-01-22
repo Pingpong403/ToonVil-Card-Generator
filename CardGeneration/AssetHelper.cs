@@ -11,6 +11,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <returns>whether or not the given asset was found in the assets folder</returns>
 		public static bool AssetExists(string assetName)
 		{
+			if (GainPowerAmount(assetName) != "")
+			{
+				assetName = "GainPower";
+			}
 			string relativePathNoExt = Path.Combine("assets", assetName);
 			string relativePath = relativePathNoExt + ".png";
 			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
@@ -24,6 +28,33 @@ namespace ToonVil_Card_Generator.CardGeneration
 				return true;
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Returns the extension belonging to this asset name.
+		/// </summary>
+		/// <param name="assetName">asset name to find the extension of</param>
+		/// <returns>the extension, whether .png, .jpg, or .jpeg, of the asset found, or ""</returns>
+		public static string FindExtension(string assetName)
+		{
+			string relativePathNoExt = Path.Combine("assets", assetName);
+			string ext = ".png";
+			string relativePath = relativePathNoExt + ext;
+			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+			{
+				ext = ".jpg";
+				relativePath = relativePathNoExt + ext;
+				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+				{
+					ext = ".jpeg";
+					relativePath = relativePathNoExt + ext;
+					if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+					{
+						return "";
+					}
+				}
+			}
+			return ext;
 		}
 
 		/// <summary>
