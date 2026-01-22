@@ -6,11 +6,25 @@ using System.Reflection;
 
 namespace ToonVil_Card_Generator;
 
+public enum CardType
+{
+    Ability,
+    Activate,
+    ActivateCost,
+    AbilityActivate,
+    AbilityActivateCost
+}
+
 class Program
 {
     static void Main(string[] args)
     {
         Console.WriteLine("ToonVil Card Generator");
+        
+        // Setup variables and clean intermediaries
+        Color textColor = ColorTranslator.FromHtml("#d7b06c");
+        SizeIcon();
+        CleanIntermediaries();
 
         // Load all the fonts
         string titleFontFile = ConfigHelper.GetConfigValue("card", "titleFont");
@@ -36,39 +50,38 @@ class Program
         Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();
 
         // Go through each line of Cards.txt and build cards
+        // List<string> cardData = MiscHelper.GetTextFilesLines("Cards");
+        // foreach (string card in cardData)
+        // {
+        //     // Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
+        //     string[] cardSplit = card.Split("\t");
+        //     string title = cardSplit[0];
+        //     string cost = cardSplit[1];
+        //     string strength = cardSplit[2];
+        //     string ability = cardSplit[3];
+        //     string activateAbility = cardSplit[4];
+        //     string activateCost = cardSplit[5];
+        //     string type = cardSplit[6];
+        //     string topRight = cardSplit[7];
+        //     string bottomRight = cardSplit[8];
+        //     string deck = cardSplit[9];
+        //     string gainsAction = cardSplit[10];
+
+            
+        // }
+
+        // // Cleanup
+        // CleanImageIntermediaryFinal();
 
         // TEMPORARY
 
-        // Setup
-        Color textColor = ColorTranslator.FromHtml("#d7b06c");
-        SizeIcon();
-        CleanIntermediaries();
-
-        // Spongebob Squarepants
-        DrawText("Spongebob Squarepants", titleFont, textColor, 1230, 166, "Title", keywordsAndColors);
-		DrawText("Spongebob Squarepants cannot be defeated or discarded. DividingLine_ Plankton: The cost to play Allies is increased by 2 Power.", abilityFont, textColor, 1230, 668, "Ability", keywordsAndColors);
+        // John Doe - test
+        DrawTitle("John Doe", titleFont, textColor, 1230, 166);
+		DrawAbility("Die. DividingLine_ Player: Die, but more glamorously.", "", "", "", abilityFont, textColor, 1230, 668, keywordsAndColors);
 		DrawText("5", strengthFont, textColor, 1230, 690, "Strength", keywordsAndColors);
         DrawText("Hero", typeFont, textColor, 1230, 690, "Type", keywordsAndColors);
-		SizeCardImage("Spongebob Squarepants");
-        CombineImages("Spongebob Squarepants", "Fate");
-        CleanIntermediaries();
-
-        // Filing Cabinet
-        DrawText("Filing Cabinet", titleFont, textColor, 1230, 690, "Title", keywordsAndColors);
-		DrawText("Play the top card of the \\Plan deck.", abilityFont, textColor, 1230, 690, "Ability", keywordsAndColors);
-		DrawText("2", costFont, textColor, 1230, 690, "Cost", keywordsAndColors);
-        DrawText("Item", typeFont, textColor, 1230, 690, "Type", keywordsAndColors);
-		SizeCardImage("Filing Cabinet");
-        CombineImages("Filing Cabinet", "Villain");
-        CleanIntermediaries();
-
-        // Plan Z
-        DrawText("Plan Z", titleFont, textColor, 1230, 690, "Title", keywordsAndColors);
-		DrawText("Find and play King Neptune's Crown to Shell City. Move Spongebob Squarepants to the Krusty Krab.", abilityFont, textColor, 1230, 690, "Ability", keywordsAndColors);
-		DrawText("1", topRightFont, textColor, 1230, 690, "TopRightElement", keywordsAndColors);
-        DrawText("Plan", typeFont, textColor, 1230, 690, "Type", keywordsAndColors);
-		SizeCardImage("Plan Z");
-        CombineImages("Plan Z", "Plan");
+		SizeCardImage("John Doe");
+        CombineImages("John Doe", "Fate");
         CleanIntermediaries();
 
         // Cleanup

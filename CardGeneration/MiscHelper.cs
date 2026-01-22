@@ -37,11 +37,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 				// Continue to read until you reach end of file
 				while (line != null)
 				{
-					// '#' denotes a comment line
-					if (line[0] != '#')
+					// Skip empty lines
+					if (line != "")
 					{
-						// Add the line to the list
-						lines.Add(line);
+						// '#' denotes a comment line
+						if (line[0] != '#')
+						{
+							// Add the line to the list
+							lines.Add(line);
+						}
 					}
 					// Read the next line
 					line = sr.ReadLine();

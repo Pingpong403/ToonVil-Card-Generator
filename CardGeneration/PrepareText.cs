@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection.Metadata;
 using System.Diagnostics.Tracing;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace ToonVil_Card_Generator.CardGeneration
 {
@@ -13,7 +14,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 	{
 		// summary
 		// <meta>Drawing code originally from https://gist.github.com/naveedmurtuza/6600103</meta>
-		public static void DrawText(String text, Font font, Color textColor, int maxWidth, int maxHeight, string element, Dictionary<string, string> keywordsAndColors)
+		public static void DrawText(string text, Font font, Color textColor, int maxWidth, int maxHeight, string element, Dictionary<string, string> keywordsAndColors)
 		{
 			// First, if it is a Title, capitalize the text
 			if (string.Equals(element.ToLower(), "title") || string.Equals(element.ToLower(), "type"))
@@ -175,7 +176,247 @@ namespace ToonVil_Card_Generator.CardGeneration
 			img.Dispose();
 		}
 
-		public static List<CardWord> GetCardWords(string text, Brush defaultBrush, Font defaultFont, Dictionary<string, string> keywordData, bool isType = false)
+		/// <summary>
+		/// Creates an image in TextIntermediary that contains the title.
+		/// </summary>
+		/// <param name="text">title text</param>
+		/// <param name="font">font to draw the title in</param>
+		/// <param name="textColor">color to draw the title in</param>
+		/// <param name="maxWidth">maximum width the title is allowed to take up</param>
+		/// <param name="maxHeight">maximum height the title is allowed to take up</param>
+		public static void DrawTitle(string text, Font font, Color textColor, int maxWidth, int maxHeight)
+		{
+			// For titles, capitalize the text
+			text = text.ToUpper();
+
+			// Set the stringformat flags for center alignment and no trimming
+			StringFormat sf = StringFormat.GenericTypographic;
+			sf.Trimming = StringTrimming.None;
+			sf.Alignment = StringAlignment.Center;
+			sf.LineAlignment = StringAlignment.Center;
+
+			// Create a new image of the maximum size for our graphics
+			Image img = new Bitmap(maxWidth, maxHeight);
+			Graphics drawing = Graphics.FromImage(img);
+
+			// Use high quality everything
+			drawing.CompositingQuality = CompositingQuality.HighQuality;
+			drawing.InterpolationMode = InterpolationMode.HighQualityBilinear;
+			drawing.PixelOffsetMode = PixelOffsetMode.HighQuality;
+			drawing.SmoothingMode = SmoothingMode.HighQuality;
+			drawing.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+			
+			// Paint a transparent background
+			drawing.Clear(Color.Transparent);
+
+			// Create a brush for the text
+			Brush textBrush = new SolidBrush(textColor);
+
+			// One line maximum
+			int textHeight = (int)Math.Ceiling(drawing.MeasureString(text, font, 100000, sf).Height);
+
+			// Find the proper squish ratio for given title
+			int textFullWidth = (int)drawing.MeasureString(text, font, 100000, sf).Width;
+			if (textFullWidth > maxWidth)
+			{
+				float horizontalSquish = (float)maxWidth / textFullWidth;
+				drawing.ScaleTransform(horizontalSquish, 1.0F);
+				maxWidth = textFullWidth;
+			}
+
+			// Get all the words
+			List<CardWord> words = GetCardWords(text, textBrush, font, null);
+
+			// Set up variables
+			int startY = (maxHeight - textHeight) / 2;
+
+			// Draw title word by word
+			int currentX = (maxWidth - textFullWidth) / 2;
+			foreach (CardWord word in words)
+			{
+				int wordWidth = (int)Math.Ceiling(word.GetSizeF(drawing, maxWidth, sf).Width);
+				int wordHeight = (int)Math.Ceiling(word.GetSizeF(drawing, maxWidth, sf).Height);
+				drawing.DrawString(word.GetText(), word.GetTextFont(), word.GetTextBrush(), new RectangleF(currentX, startY, wordWidth, wordHeight), sf);
+				currentX += wordWidth;
+			}
+
+			drawing.Save();
+
+			textBrush.Dispose();
+			drawing.Dispose();
+
+			// Ensure output directory exists and save per-element PNG
+			var relativeOutDir = Path.Combine("temp", "TextIntermediary");
+            var outDir = PathHelper.GetFullPath(relativeOutDir);
+			Directory.CreateDirectory(outDir);
+			var outpath = Path.Combine(outDir, "Title.png");
+			img.Save(outpath, ImageFormat.Png);
+			img.Dispose();
+		}
+
+		/// <summary>
+		/// Creates an image in TextIntermediary that contains all of the text/assets needed for an ability.
+		/// </summary>
+		/// <param name="ability">ability of the card</param>
+		/// <param name="activateAbility">ability on activate of the card</param>
+		/// <param name="activateCost">cost to activate the card</param>
+		/// <param name="gainsAction">action this card's location gains</param>
+		/// <param name="font">font to draw the text with</param>
+		/// <param name="textColor">base color to draw the text with</param>
+		/// <param name="maxWidth">maximum width this text can take</param>
+		/// <param name="maxHeight">maximum height this text can take</param>
+		/// <param name="keywordsAndColors">a dictionary to compare every word to to determine bolding and coloring</param>
+		public static void DrawAbility(string ability, string activateAbility, string activateCost, string gainsAction, Font font, Color textColor, int maxWidth, int maxHeight, Dictionary<string, string> keywordsAndColors)
+		{
+			// Set up variables we'll potentially need
+			float actionSymbolLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
+
+			// Set the stringformat flags for center alignment and no trimming
+			StringFormat sf = StringFormat.GenericTypographic;
+			sf.Trimming = StringTrimming.None;
+			sf.Alignment = StringAlignment.Center;
+			sf.LineAlignment = StringAlignment.Center;
+
+			// Create a new image of the maximum size for our graphics
+			Image img = new Bitmap(maxWidth, maxHeight);
+			Graphics drawing = Graphics.FromImage(img);
+
+			// Use high quality everything
+			drawing.CompositingQuality = CompositingQuality.HighQuality;
+			drawing.InterpolationMode = InterpolationMode.HighQualityBilinear;
+			drawing.PixelOffsetMode = PixelOffsetMode.HighQuality;
+			drawing.SmoothingMode = SmoothingMode.HighQuality;
+			drawing.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+			
+			// Paint a transparent background
+			drawing.Clear(Color.Transparent);
+
+			// Create a brush for the text
+			Brush textBrush = new SolidBrush(textColor);
+
+			// Naively find the maximum allowable font size
+			float lineHeight;
+			float abilityHeight;
+			float activateAbilityHeight;
+			float gainsActionHeight;
+			float textHeight;
+			float granularity = 0.5F;
+			do
+			{
+				// Combine every given ability into one metric
+				lineHeight = drawing.MeasureString("Tq", font, maxWidth, sf).Height;
+				abilityHeight = ability == "" ? 0 : drawing.MeasureString(GetCleanText(ability), font, maxWidth, sf).Height;
+				activateAbilityHeight = (activateAbility == "" && activateCost == "") ? 0 : 3 * lineHeight + (activateAbility == "" ? 0 : drawing.MeasureString(GetCleanText(activateAbility), font, maxWidth, sf).Height);
+				gainsActionHeight = gainsAction == "" ? 0 : 4 * lineHeight;
+				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight;
+
+				if (textHeight > maxHeight) font = new Font(font.Name, font.SizeInPoints - granularity, font.Style);
+			} while (textHeight > maxHeight);
+			
+			// To keep line spacing consistent - adjust for padding
+			float wordHeight = drawing.MeasureString("Tq", font, maxWidth, sf).Height;
+			wordHeight *= 1.0F + (5.55F / wordHeight);
+
+			// Drawing variables
+			float currentY = (maxHeight - textHeight) / 2;
+			List<CardWord> words;
+
+			// Draw the ability first
+			if (ability != "")
+			{
+				words = GetCardWords(ability, textBrush, font, keywordsAndColors);
+
+				currentY = DrawWordByWord(drawing, font, sf, words, maxWidth, wordHeight, currentY);
+			}
+
+			// Then draw the activate symbol, cost, and ability
+			if (activateAbility != "" || activateCost != "")
+			{
+				// Symbol
+				string activateSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", "Activate.png"));
+				Image activateSymbol = Image.FromFile(activateSymbolPath);
+				float resizing = actionSymbolLines * lineHeight / activateSymbol.Height;
+				float centerX = maxWidth / 2;
+				if (activateCost != "")
+				{
+					centerX -= 250;
+				}
+				DrawSymbol(drawing, activateSymbol, centerX, currentY + lineHeight * 1.5F, resizing);
+				
+				// Cost, if any
+				if (activateCost != "")
+				{
+					words = GetCardWords(activateCost, textBrush, font, keywordsAndColors);
+					float xOffset = 300F;
+					float activateCostWidth = maxWidth / 2;
+					float activateCostHeight = drawing.MeasureString(GetCleanText(activateCost), font, (int)activateCostWidth, sf).Height;
+					float activateCostY = currentY + (3 * lineHeight - activateCostHeight) / 2; // maximum of 3 lines for clarity
+					DrawWordByWord(drawing, font, sf, words, activateCostWidth, wordHeight, activateCostY, xOffset);
+				}
+				currentY += 3 * lineHeight;
+
+				// Ability, if any
+				if (activateAbility != "")
+				{
+					words = GetCardWords(activateAbility, textBrush, font, keywordsAndColors);
+					currentY = DrawWordByWord(drawing, font, sf, words, maxWidth, wordHeight, currentY);
+				}
+			}
+
+			// Finally, draw the gained action
+			if (gainsAction != "")
+			{
+				// Preceding text
+				SizeF precedingTextWidthHeight = drawing.MeasureString("This location gains:", font, 100000, sf);
+				RectangleF precedingTextRect = new RectangleF(
+					(maxWidth - precedingTextWidthHeight.Width) / 2,
+					currentY,
+					precedingTextWidthHeight.Width,
+					precedingTextWidthHeight.Height
+				);
+				drawing.DrawString("This location gains:", font, textBrush, precedingTextRect, sf);
+				currentY += lineHeight;
+
+				// Symbol
+				string assetName = AssetHelper.GetAssetName(gainsAction);
+				string gainPowerAmt = AssetHelper.GainPowerAmount(assetName);
+				if (gainPowerAmt != "")
+				{
+					assetName = "GainPower";
+				}
+				string gainsSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", assetName + ".png"));
+				Image gainsSymbol = Image.FromFile(gainsSymbolPath);
+				float resizing = actionSymbolLines * lineHeight / gainsSymbol.Height;
+				DrawSymbol(drawing, gainsSymbol, maxWidth / 2, currentY + 1.5F * lineHeight, resizing);
+
+				// If this was a Gain Power action, draw the amount to be gained
+				if (gainPowerAmt != "")
+				{
+					Font gainPowerFont = FontLoader.GetFont(
+						ConfigHelper.GetConfigValue("card", "elementFont"),
+						float.Parse(ConfigHelper.GetConfigValue("card", "costFontSize"))
+					);
+					float gainPowerAmtWidth = drawing.MeasureString(gainPowerAmt, gainPowerFont, 10000, sf).Width;
+					PointF gainPowerPos = new PointF();
+					drawing.DrawString(gainPowerAmt, gainPowerFont, textBrush, gainPowerPos);
+				}
+			}
+
+			drawing.Save();
+
+			textBrush.Dispose();
+			drawing.Dispose();
+
+			// Ensure output directory exists and save per-element PNG
+			var relativeOutDir = Path.Combine("temp", "TextIntermediary");
+            var outDir = PathHelper.GetFullPath(relativeOutDir);
+			Directory.CreateDirectory(outDir);
+			var outpath = Path.Combine(outDir, "Ability.png");
+			img.Save(outpath, ImageFormat.Png);
+			img.Dispose();
+		}
+
+		public static List<CardWord> GetCardWords(string text, Brush defaultBrush, Font defaultFont, Dictionary<string, string>? keywordData, bool isType = false)
 		{
 			// char italicSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "italicCharacter"));
 			char escapeSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "escapeCharacter"));
@@ -197,7 +438,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					// End of word
 					if (builtWord != "")
 					{
-						bool isKeyword = keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+						bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
 						CardWord word = new CardWord(
 							builtWord,
 							isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
@@ -242,7 +483,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					{
 						if (builtWord != "")
 						{
-							bool isKeyword = keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
 							CardWord word = new CardWord(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
@@ -258,7 +499,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					{
 						if (MiscHelper.IsPunctuation(Convert.ToString(letter)))
 						{
-							bool isKeyword = keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
 							CardWord word = new CardWord(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
@@ -279,7 +520,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 			if (builtWord != "")
 			{
-				bool isKeyword = keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
+				bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
 				CardWord word = new CardWord(
 					builtWord,
 					isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
@@ -292,6 +533,120 @@ namespace ToonVil_Card_Generator.CardGeneration
 			return cardWords;
 		}
 
+		/// <summary>
+		/// For use when words of varying styles need to be drawn in a cohesive paragraph.
+		/// Meant to be used in a chain with other text that will share the same Graphics object.
+		/// </summary>
+		/// <param name="g">the Graphics object used to draw</param>
+		/// <param name="f">the base Font used by the words</param>
+		/// <param name="sf">the StringFormat used to draw the words</param>
+		/// <param name="words">each word to be drawn</param>
+		/// <param name="maxW">max width the words are allowed to take up</param>
+		/// <param name="wordH">height the words take up</param>
+		/// <param name="startY">the y-coordinate to start drawing at</param>
+		/// <returns>the y-coordinate drawing ended at</returns>
+		private static float DrawWordByWord(Graphics g, Font f, StringFormat sf, List<CardWord> words, float maxW, float wordH, float startY, float xOffset = 0)
+		{
+			// Draw text word by word
+			float currentY = startY;
+			int iCheckWordLengths = 0;
+			int iDraw = 0;
+			int lineLength;
+			bool endOfText = false;
+			while (!endOfText)
+			{
+				// First, find the length of this line
+				lineLength = 0;
+				try
+				{
+					bool endOfLine = false;
+					bool skippedSpace = false;
+					int currentWordWidth;
+					int previousSpaceWidth = 0;
+					while (!endOfLine)
+					{
+						if (skippedSpace) previousSpaceWidth = (int)Math.Ceiling(words[iCheckWordLengths - 1].GetSizeF(g, (int)maxW, sf).Width);
+
+						// Measure each word without regards to style.
+						Font currentFont = words[iCheckWordLengths].GetTextFont();
+						words[iCheckWordLengths].SetTextFont(f);
+						currentWordWidth = (int)Math.Ceiling(words[iCheckWordLengths].GetSizeF(g, (int)maxW, sf).Width);
+						words[iCheckWordLengths].SetTextFont(currentFont);
+
+						// Trying to access past end of available words will throw an
+						// error that we will catch
+						if (words[iCheckWordLengths].GetText() == " ")
+						{
+							skippedSpace = true;
+							iCheckWordLengths++;
+						}
+						else if (lineLength + currentWordWidth + (skippedSpace ? previousSpaceWidth : 0) > maxW)
+						{
+							endOfLine = true;
+						}
+						else if (words[iCheckWordLengths].GetText() == "\n")
+						{
+							endOfLine = true;
+							iCheckWordLengths++;
+						}
+						else
+						{
+							lineLength += currentWordWidth + (skippedSpace ? previousSpaceWidth : 0);
+							skippedSpace = false;
+							iCheckWordLengths++;
+						}
+					}
+				}
+				catch (Exception ex)            
+				{                
+					if (ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException)
+					{
+						endOfText = true;
+					}
+					else
+						throw;
+				}
+
+				// Then, draw each word in the line
+				float currentX = (maxW + xOffset - lineLength) / 2;
+				for (int i = iDraw; i < iCheckWordLengths; i++)
+				{
+					CardWord word = words[i];
+					float wordWidth = words[iDraw].GetSizeF(g, (int)maxW, sf).Width;
+					Font currentFont = words[i].GetTextFont();
+					words[i].SetTextFont(f);
+					float noStyleWordWidth = words[iDraw].GetSizeF(g, (int)maxW, sf).Width;
+					words[i].SetTextFont(currentFont);
+					g.DrawString(word.GetText(), word.GetTextFont(), word.GetTextBrush(), new RectangleF(currentX + xOffset, currentY, wordWidth, wordH), sf);
+					currentX += noStyleWordWidth;
+					iDraw++;
+				}
+				currentY += wordH;
+			}
+			return currentY;
+		}
+
+		/// <summary>
+		/// Draws the given square symbol at the given coordinates.
+		/// </summary>
+		/// <param name="g">the Graphics object this will use to draw</param>
+		/// <param name="symbol">the symbol to draw</param>
+		/// <param name="centerX">the x-coordinate of the center of the symbol</param>
+		/// <param name="centerY">the y-coordinate of the center of the symbol</param>
+		/// <param name="resizing">optional resizing factor</param>
+		private static void DrawSymbol(Graphics g, Image symbol, float centerX, float centerY, float resizing = 1.0F)
+		{
+			Bitmap b = new(symbol, new Size((int)(symbol.Width * resizing), (int)(symbol.Height * resizing)));
+			float x = centerX - resizing * symbol.Width / 2;
+			float y = centerY - resizing * symbol.Height / 2;
+			g.DrawImage(b, new PointF(x, y));
+		}
+
+		/// <summary>
+		/// Removes formatting and replaces symbols in the given text.
+		/// </summary>
+		/// <param name="text">string to be cleaned</param>
+		/// <returns>the cleaned text</returns>
 		private static string GetCleanText(string text)
 		{
 			List<char> cleanText = [];
@@ -299,9 +654,11 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// char italicSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "italicCharacter"));
 			char escapeSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "escapeCharacter"));
 			char newlineSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "newlineCharacter"));
+			char assetSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "assetCharacter"));
 
 			// bool italicsOpen = false;
 			bool escapeNext = false;
+			string storedWord = "";
 			foreach (char letter in text)
 			{
 				if (escapeNext)
@@ -322,8 +679,23 @@ namespace ToonVil_Card_Generator.CardGeneration
 					{
 						cleanText.Add('\n');
 					}
+					else if (letter == assetSymbol)
+					{
+						if (AssetHelper.AssetExists(storedWord))
+						{
+							cleanText.Add('\n');
+							cleanText.Add('\n');
+							if (storedWord != "DividingLine")
+							{
+								cleanText.Add('\n');
+								cleanText.Add('\n');
+							}
+						}
+					}
 					else
 					{
+						if (letter == ' ') storedWord = "";
+						else storedWord += letter;
 						cleanText.Add(letter);
 					}
 				}

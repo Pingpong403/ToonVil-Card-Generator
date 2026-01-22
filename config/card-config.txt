@@ -2,7 +2,8 @@ w:1440
 h:2044
 textAreaMaxWidth:1230
 titleAreaMaxHeight:166
-abilityAreaMaxHeight:668
+abilityAreaMaxHeight:665
+activateCostAreaMaxWidth:670
 abilityCenterY:1618
 cornerElementMaxWidth:
 cornerElementMaxHeight:
