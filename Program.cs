@@ -23,6 +23,9 @@ class Program
         
         // Setup variables and clean intermediaries
         Color textColor = ColorTranslator.FromHtml("#d7b06c");
+        int titleAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "titleAreaMaxHeight"));
+        int textAreaMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth"));
+        int textAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "abilityAreaMaxHeight"));
         SizeIcon();
         CleanIntermediaries();
 
@@ -50,39 +53,35 @@ class Program
         Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();
 
         // Go through each line of Cards.txt and build cards
-        // List<string> cardData = MiscHelper.GetTextFilesLines("Cards");
-        // foreach (string card in cardData)
-        // {
-        //     // Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
-        //     string[] cardSplit = card.Split("\t");
-        //     string title = cardSplit[0];
-        //     string cost = cardSplit[1];
-        //     string strength = cardSplit[2];
-        //     string ability = cardSplit[3];
-        //     string activateAbility = cardSplit[4];
-        //     string activateCost = cardSplit[5];
-        //     string type = cardSplit[6];
-        //     string topRight = cardSplit[7];
-        //     string bottomRight = cardSplit[8];
-        //     string deck = cardSplit[9];
-        //     string gainsAction = cardSplit[10];
-
+        List<string> cardData = MiscHelper.GetTextFilesLines("Cards");
+        foreach (string card in cardData)
+        {
+            // Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
+            string[] cardSplit = card.Split("\t");
+            string title = cardSplit[0];
+            string cost = cardSplit[1];
+            string strength = cardSplit[2];
+            string ability = cardSplit[3];
+            string activateAbility = cardSplit[4];
+            string activateCost = cardSplit[5];
+            string type = cardSplit[6];
+            string topRight = cardSplit[7];
+            string bottomRight = cardSplit[8];
+            string deck = cardSplit[9];
+            string gainsAction = cardSplit[10];
             
-        // }
+            DrawTitle(title, titleFont, textColor, textAreaMaxWidth, titleAreaMaxHeight);
+            DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, textColor, textAreaMaxWidth, textAreaMaxHeight, keywordsAndColors);
+            DrawText(cost, costFont, textColor, textAreaMaxWidth, textAreaMaxHeight, "Strength", keywordsAndColors);
+            DrawText(strength, strengthFont, textColor, textAreaMaxWidth, textAreaMaxHeight, "Cost", keywordsAndColors);
+            DrawText(topRight, topRightFont, textColor, textAreaMaxWidth, textAreaMaxHeight, "TopRight", keywordsAndColors);
+            DrawText(bottomRight, bottomRightFont, textColor, textAreaMaxWidth, textAreaMaxHeight, "BottomRight", keywordsAndColors);
+            DrawText(type, typeFont, textColor, textAreaMaxWidth, textAreaMaxHeight, "Type", keywordsAndColors);
 
-        // // Cleanup
-        // CleanImageIntermediaryFinal();
-
-        // TEMPORARY
-
-        // John Doe - test
-        DrawTitle("John Doe", titleFont, textColor, 1230, 166);
-		DrawAbility("John Doe cannot be defeated. DividingLine_ Player: You may not gain Power by any means.", "Find and play Nemesis to John Doe's location. % This location gains:", "Pay 2 Power", "MoveHero", abilityFont, textColor, 1230, 668, keywordsAndColors);
-		DrawText("5", strengthFont, textColor, 1230, 690, "Strength", keywordsAndColors);
-        DrawText("Hero", typeFont, textColor, 1230, 690, "Type", keywordsAndColors);
-		SizeCardImage("John Doe");
-        CombineImages("John Doe", "Fate");
-        CleanIntermediaries();
+            SizeCardImage(title);
+            CombineImages(title, deck);
+            CleanIntermediaries();
+        }
 
         // Cleanup
         CleanImageIntermediaryFinal();
