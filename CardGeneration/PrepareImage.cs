@@ -128,7 +128,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			var assetsPath = PathHelper.GetFullPath("assets");
 
 			// Possible necessary elements: image, Title, Ability, Type,
-			// Cost, Strength, TopRightElement, BottomRightElement
+			// Cost, Strength, TopRight, BottomRight
 			var imagePath = Path.Combine(imageIntermediaryPath, cardTitle + ".png");
 			var altImagePath = Path.Combine(assetsPath, "black_bg.png");
 			var titlePath = Path.Combine(textIntermediaryPath, "Title.png");
@@ -136,9 +136,9 @@ namespace ToonVil_Card_Generator.CardGeneration
 			var typePath = Path.Combine(textIntermediaryPath, "Type.png");
 			var costPath = Path.Combine(textIntermediaryPath, "Cost.png");
 			var strengthPath = Path.Combine(textIntermediaryPath, "Strength.png");
-			var topRightElementPath = Path.Combine(textIntermediaryPath, "TopRightElement.png");
+			var topRightElementPath = Path.Combine(textIntermediaryPath, "TopRight.png");
 			var iconPath = Path.Combine(imageIntermediaryPath, "icon.png");
-			var bottomRightElementPath = Path.Combine(textIntermediaryPath, "BottomRightElement.png");
+			var bottomRightElementPath = Path.Combine(textIntermediaryPath, "BottomRight.png");
 
 			int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card", "w"));
 			int cardHeight = int.Parse(ConfigHelper.GetConfigValue("card", "h"));
@@ -148,8 +148,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 			g.SmoothingMode = SmoothingMode.HighQuality;
 			g.CompositingQuality = CompositingQuality.HighQuality;
-
-
 
 			// Only draw any elements if all of the necessary elements are present
 			// Necessary elements: Title, Ability, Type
@@ -195,23 +193,27 @@ namespace ToonVil_Card_Generator.CardGeneration
 				g.DrawImage(typeImg, (cardWidth - typeImg.Width) / 2, 1986 - typeImg.Height / 2);
 			}
 			
-			// Strength
-			if (File.Exists(strengthPath))
-			{
-				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Strength.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-				using (Image strImg = Image.FromFile(strengthPath))
-				{
-					g.DrawImage(strImg, 145 - strImg.Width / 2, cardHeight - 139 - strImg.Height / 2);
-				}
-			}
-			
 			// Cost
 			if (File.Exists(costPath))
 			{
 				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Cost.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 				using (Image costImg = Image.FromFile(costPath))
 				{
-					g.DrawImage(costImg, 193 - costImg.Width / 2, 191 - costImg.Height / 2);
+					int costX = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterX")) - costImg.Width / 2;
+					int costY = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterY")) - costImg.Height / 2;
+					g.DrawImage(costImg, costX, costY);
+				}
+			}
+			
+			// Strength
+			if (File.Exists(strengthPath))
+			{
+				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Strength.png")), new Rectangle(0, 0, cardWidth, cardHeight));
+				using (Image strImg = Image.FromFile(strengthPath))
+				{
+					int strX = int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterX")) - strImg.Width / 2;
+					int strY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterY")) - strImg.Height / 2;
+					g.DrawImage(strImg, strX, strY);
 				}
 			}
 
@@ -221,18 +223,22 @@ namespace ToonVil_Card_Generator.CardGeneration
 				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "TopRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 				using (Image topRightImg = Image.FromFile(topRightElementPath))
 				{
-					g.DrawImage(topRightImg, cardWidth - 192 - topRightImg.Width / 2, 195 - topRightImg.Height / 2);
+					int topRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterX")) - topRightImg.Width / 2;
+					int topRightY = int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterY")) - topRightImg.Height / 2;
+					g.DrawImage(topRightImg, topRightX, topRightY);
 				}
 			}
 
 			// Bottom Right Element
-			// if exists, use value given. otherwise, use icon.png
+			// ToonVil: if exists, use value given. otherwise, use icon.png
 			if (File.Exists(bottomRightElementPath))
 			{
 				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 				using (Image bottomRightImg = Image.FromFile(bottomRightElementPath))
 				{
-					g.DrawImage(bottomRightImg, cardWidth - 138 - bottomRightImg.Width / 2, cardHeight - 139 - bottomRightImg.Height / 2);
+					int bottomRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterX")) - bottomRightImg.Width / 2;
+					int bottomRightY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterY")) - bottomRightImg.Height / 2;
+					g.DrawImage(bottomRightImg, bottomRightX, bottomRightY);
 				}
 			}
 			else if (File.Exists(iconPath))

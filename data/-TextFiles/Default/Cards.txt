@@ -8,15 +8,15 @@
 # Fate Deck
 Spongebob Squarepants		5	Spongebob Squarepants cannot be defeated or discarded. DividingLine_ Plankton: The cost to play Allies is increased by 2 Power.			Hero			Fate	
 Squidward Tentacles		3	When targetting Squidward Tentacles in a Vanquish action, at least 2 Allies must be used. DividingLine_ Plankton: Plans may not be played to Squidward Tentacle's location.			Hero			Fate	
-King Neptune		8	If King Neptune has 4 or less Power on him, he does not cover action at his location. At the end of this Villain's turn, place 1 Power from the Supply on King Neptune.			Hero			Fate	
+King Neptune		8	If King Neptune has 4 or less Power on him, he does not cover actions at his location. At the end of the targeted Villain's turn, if King Neptune has 4 or less Power on him, place 1 Power from the Supply on King Neptune.			Hero			Fate	
 
 # Villain Deck
-#Filing Cabinet	2			Play the top card of the \Plan deck.	Pay 1 Power	Item			Villain	
+Filing Cabinet	2			Play the top card of the \Plan deck.	Pay 1 Power	Item			Villain	
 
 # Plan Deck
-#Plan A
-#Plan K
-#Plan L
+Plan A			This location gains:			Plan	3		Plan	MoveHero
+Plan K			This location gains:			Plan	2		Plan	MoveHero
+Plan L			
 #Plan N
 #Plan O
 #Plan P

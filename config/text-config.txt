@@ -1,3 +1,15 @@
+titleFont:candyBeans.otf
+abilityFont:cartoonToyTurbo.otf
+elementFont:candyBeans.otf
+typeFont:candyBeans.otf
+titleFontSize:110
+abilityFontSize:80
+strengthFontSize:110
+costFontSize:95
+topRightFontSize:95
+bottomRightFontSize:95
+typeFontSize:90
+lineSpacingFactor:1.0
 italicCharacter:*
 escapeCharacter:\
 newlineCharacter:%

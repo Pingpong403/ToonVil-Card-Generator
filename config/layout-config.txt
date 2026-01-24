@@ -1,5 +1,14 @@
-probably don't need
-
-villainDeckPrefix:Villain
-fateDeckPrefix:Fate
-otherDeckNames:
+titleCenterX:
+titleCenterY:
+abilityCenterX:
+abilityCenterY:
+typeCenterX:
+typeCenterY:
+costCenterX:187
+costCenterY:191
+strengthCenterX:139
+strengthCenterY:139
+topRightCenterX:187
+topRightCenterY:195
+bottomRightCenterX:138
+bottomRightCenterY:140

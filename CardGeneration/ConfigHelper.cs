@@ -14,7 +14,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <exception cref="FileNotFoundException"></exception>
 		public static string GetConfigValue(string configFile, string key)
 		{
-			string path = PathHelper.GetFullPath($"config\\{configFile}-config.txt");
+			string path = PathHelper.GetFullPath(Path.Combine("config", configFile + "-config.txt"));
 			if (!File.Exists(path))
             {
                 // Fallback to current working dir (e.g., when running with dotnet run from project root)
@@ -68,7 +68,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <exception cref="FileNotFoundException"></exception>
 		public static Dictionary<string, string> GetAllValues(string configFile)
 		{
-			string path = PathHelper.GetFullPath($"config\\{configFile}-config.txt");
+			string path = PathHelper.GetFullPath(Path.Combine("config", configFile + "-config.txt"));
 			if (!File.Exists(path))
             {
                 // Fallback to current working dir (e.g., when running with dotnet run from project root)
