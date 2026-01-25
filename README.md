@@ -10,7 +10,7 @@ Ensure you have Git installed on your system. [Here](https://git-scm.com/install
 - With Git installed, simply type `git clone https://github.com/Pingpong403/ToonVil-Card-Generator` and press return/enter.
 - Once it's done cloning, this generator is ready to use!
 
-## How to Use
+## How to Use this Generator
 1) Place the desired files in their designated folders
 2) Run `generator.exe` to assemble the cards. They will be found in -Exports
 
