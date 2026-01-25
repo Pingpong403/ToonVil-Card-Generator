@@ -16,3 +16,4 @@ Here is a list documenting every time I have asked AI a question and how it impa
 - saving resized image, not original, to ImageIntermediary
 - finding why files were being used when trying to delete
 - removing excess padding from words
+- finding the proper root directory between dotnet run and the published executable

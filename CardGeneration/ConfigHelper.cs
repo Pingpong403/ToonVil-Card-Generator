@@ -17,11 +17,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 			string path = PathHelper.GetFullPath(Path.Combine("config", configFile + "-config.txt"));
 			if (!File.Exists(path))
             {
-                // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "config", configFile + "-config.txt"));
-            }
-            if (!File.Exists(path))
-            {
                 throw new FileNotFoundException($"Config file not found: {path}");
             }
 
@@ -70,11 +65,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 		{
 			string path = PathHelper.GetFullPath(Path.Combine("config", configFile + "-config.txt"));
 			if (!File.Exists(path))
-            {
-                // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "config", configFile + "-config.txt"));
-            }
-            if (!File.Exists(path))
             {
                 throw new FileNotFoundException($"Config file not found: {path}");
             }

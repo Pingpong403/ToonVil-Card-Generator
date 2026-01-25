@@ -14,11 +14,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 		{
 			List<string> lines = [];
 			string path = PathHelper.GetFullPath(Path.Combine("data", "-TextFiles", file + ".txt"));
-			if (!File.Exists(path))
-            {
-                // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "data", "-TextFiles", file + ".txt"));
-            }
             if (!File.Exists(path))
             {
                 throw new FileNotFoundException($"Text file not found: {path}");

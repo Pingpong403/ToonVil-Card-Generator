@@ -26,11 +26,6 @@ namespace ToonVil_Card_Generator.CardGeneration
             var fontPath = PathHelper.GetFullPath(relativePath);
             if (!File.Exists(fontPath))
             {
-                // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                fontPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), relativePath));
-            }
-            if (!File.Exists(fontPath))
-            {
                 throw new FileNotFoundException($"Font file not found: {fontPath}");
             }
 

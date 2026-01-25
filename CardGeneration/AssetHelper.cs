@@ -15,19 +15,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 			{
 				assetName = "GainPower";
 			}
-			string relativePathNoExt = Path.Combine("assets", assetName);
-			string altRelativePathNoExt = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "assets", assetName));
-			string relativePath = relativePathNoExt + ".png";
-			string altRelativePath = altRelativePathNoExt + ".png";
-			if (!File.Exists(PathHelper.GetFullPath(relativePath)) && !File.Exists(PathHelper.GetFullPath(altRelativePath)))
+			string pathNoExt = Path.Combine("assets", assetName);
+			string relativePath = pathNoExt + ".png";
+			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 			{
-				relativePath = relativePathNoExt + ".jpg";
-				altRelativePath = altRelativePathNoExt + ".jpg";
-				if (!File.Exists(PathHelper.GetFullPath(relativePath)) && !File.Exists(PathHelper.GetFullPath(altRelativePath)))
+				relativePath = pathNoExt + ".jpg";
+				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 				{
-					relativePath = relativePathNoExt + ".jpeg";
-					altRelativePath = altRelativePathNoExt + ".jpeg";
-					return File.Exists(PathHelper.GetFullPath(relativePath)) || File.Exists(PathHelper.GetFullPath(altRelativePath));
+					relativePath = pathNoExt + ".jpeg";
+					return File.Exists(PathHelper.GetFullPath(relativePath));
 				}
 				return true;
 			}
@@ -41,22 +37,18 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <returns>the extension, whether .png, .jpg, or .jpeg, of the asset found, or ""</returns>
 		public static string FindExtension(string assetName)
 		{
-			string relativePathNoExt = Path.Combine("assets", assetName);
-			string altRelativePathNoExt = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "assets", assetName));
+			string pathNoExt = Path.Combine("assets", assetName);
 			string ext = ".png";
-			string relativePath = relativePathNoExt + ext;
-			string altRelativePath = altRelativePathNoExt + ext;
-			if (!File.Exists(PathHelper.GetFullPath(relativePath)) && !File.Exists(PathHelper.GetFullPath(altRelativePath)))
+			string relativePath = pathNoExt + ext;
+			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 			{
 				ext = ".jpg";
-				relativePath = relativePathNoExt + ext;
-				altRelativePath = altRelativePathNoExt + ext;
-				if (!File.Exists(PathHelper.GetFullPath(relativePath)) && !File.Exists(PathHelper.GetFullPath(altRelativePath)))
+				relativePath = pathNoExt + ext;
+				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 				{
 					ext = ".jpeg";
-					relativePath = relativePathNoExt + ext;
-					altRelativePath = altRelativePathNoExt + ext;
-					if (!File.Exists(PathHelper.GetFullPath(relativePath)) && !File.Exists(PathHelper.GetFullPath(altRelativePath)))
+					relativePath = pathNoExt + ext;
+					if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 					{
 						return "";
 					}

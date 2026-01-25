@@ -3,7 +3,6 @@
 # Keywords are always bolded.
 # Format any new keywords like this:
 # [Keyword]|[Keyword plural]|[Keyword possessive]|[Keyword plural possessive]
-# Pink Flower, Holly, Fairy Godmother, Great Diamond Authority, Strawberry Jam
 Ally|Allies|Ally's|Allies'
 Item|Items|Item's|Items'
 Effect|Effects|Effect's|Effects'
