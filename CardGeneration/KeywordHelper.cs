@@ -27,6 +27,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 			return keywords;
 		}
 
+		/// <summary>
+		/// Gets every specified keyword and the color it should use.
+		/// </summary>
+		/// <returns>a dictionary containing every possible keyword and associated color</returns>
 		public static Dictionary<string, string> GetColorMapping()
 		{
 			Dictionary<string, string> baseKeywordColors = new Dictionary<string, string>();

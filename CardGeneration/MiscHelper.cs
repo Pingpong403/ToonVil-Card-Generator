@@ -13,7 +13,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static List<string> GetTextFilesLines(string file)
 		{
 			List<string> lines = [];
-
 			string path = PathHelper.GetFullPath(Path.Combine("data", "-TextFiles", file + ".txt"));
 			if (!File.Exists(path))
             {
@@ -22,7 +21,7 @@ namespace ToonVil_Card_Generator.CardGeneration
             }
             if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"Keyword file not found: {path}");
+                throw new FileNotFoundException($"Text file not found: {path}");
             }
 
 			string line;

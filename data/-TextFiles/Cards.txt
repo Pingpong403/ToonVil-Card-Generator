@@ -6,5 +6,6 @@
 # Title, Cost, Strength, On Play Ability, Activate Ability, Activate Cost Text, Type, Top Right, Bottom Right, Deck Name, Gains Action Symbol
 
 # Fate Deck
+Google		10	The targeted Villain cannot search the Villain deck.			Hero			Fate	
 
 # Villain Deck

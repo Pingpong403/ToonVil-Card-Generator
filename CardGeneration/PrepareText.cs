@@ -14,179 +14,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 	public static class PrepareText
 	{
 		/// <summary>
-		/// Draws the specified text to a graphics object and saves it in the text intermediary.
-		/// </summary>
-		/// <param name="text">text to be formatted and drawn</param>
-		/// <param name="font">base text font</param>
-		/// <param name="textColor">base text color</param>
-		/// <param name="maxWidth">maximum allowed width</param>
-		/// <param name="maxHeight">maximum allowed height</param>
-		/// <param name="element">the name of the element being drawn</param>
-		/// <param name="keywordsAndColors">a dictionary containing every possible keyword and associated color</param>
-		/// <meta>Drawing code originally from https://gist.github.com/naveedmurtuza/6600103</meta>
-		public static void DrawText(string text, Font font, Color textColor, int maxWidth, int maxHeight, string element, Dictionary<string, string> keywordsAndColors)
-		{
-			// First, if it is a Title, capitalize the text
-			if (string.Equals(element.ToLower(), "title") || string.Equals(element.ToLower(), "type"))
-			{
-				text = text.ToUpper();
-			}
-
-			// Set the stringformat flags for center alignment and no trimming
-			StringFormat sf = StringFormat.GenericTypographic;
-			sf.Trimming = StringTrimming.None;
-			sf.Alignment = StringAlignment.Center;
-			sf.LineAlignment = StringAlignment.Center;
-
-			// Create a new image of the maximum size for our graphics
-			Image img = new Bitmap(maxWidth, maxHeight);
-			Graphics drawing = Graphics.FromImage(img);
-
-			// Use high quality everything
-			drawing.CompositingQuality = CompositingQuality.HighQuality;
-			drawing.InterpolationMode = InterpolationMode.HighQualityBilinear;
-			drawing.PixelOffsetMode = PixelOffsetMode.HighQuality;
-			drawing.SmoothingMode = SmoothingMode.HighQuality;
-			drawing.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-			
-			// Paint a transparent background
-			drawing.Clear(Color.Transparent);
-
-			// Create a brush for the text
-			Brush textBrush = new SolidBrush(textColor);
-
-			// Everything but abilities have one line maximum
-			int textHeight;
-			if (element != "Ability") textHeight = (int)Math.Ceiling(drawing.MeasureString(text, font, 100000, sf).Height);
-			else textHeight = (int)Math.Ceiling(drawing.MeasureString(GetCleanText(text), font, maxWidth, sf).Height);
-
-			// Find the proper font size (abilities) or squish ratio (everything else)
-			// for given text
-			float granularity = 0.5F;
-			if (element == "Ability")
-			{
-				float currentFontSize = font.Size;
-				// Naively find maximum font size to fit text
-				do
-				{
-					SizeF currentSize = drawing.MeasureString(GetCleanText(text), font, maxWidth, sf);
-					textHeight = (int)Math.Ceiling(currentSize.Height);
-					if (textHeight > maxHeight)
-					{
-						currentFontSize = font.Size - granularity;
-						font = new Font(font.Name, currentFontSize, font.Style);
-					}
-				} while (textHeight > maxHeight);
-			}
-			else
-			{
-				int textFullWidth = (int)drawing.MeasureString(text, font, 100000, sf).Width;
-				if (textFullWidth > maxWidth)
-				{
-					float horizontalSquish = (float)maxWidth / textFullWidth;
-					drawing.ScaleTransform(horizontalSquish, 1.0F);
-					maxWidth = (int)textFullWidth;
-				}
-			}
-			
-			// To keep line spacing consistent - adjust for padding
-			float wordHeight = drawing.MeasureString("Tq", font, maxWidth, sf).Height;
-			wordHeight *= 1.0F + (5.55F / wordHeight);
-
-			// Get all the words
-			List<CardWord> words = GetCardWords(text, textBrush, font, keywordsAndColors, String.Equals(element.ToLower(), "type"));
-
-			// Set up variables
-			int iCheckWordLengths = 0;
-			int iDraw = 0;
-			int line = 0;
-			int lineLength;
-			int startY = (maxHeight - textHeight) / 2;
-
-			// Draw text word by word
-			bool endOfText = false;
-			while (!endOfText)
-			{
-				// First, find the length of this line
-				lineLength = 0;
-				try
-				{
-					bool endOfLine = false;
-					bool skippedSpace = false;
-					int currentWordWidth;
-					int previousSpaceWidth = 0;
-					while (!endOfLine)
-					{
-						if (skippedSpace) previousSpaceWidth = (int)Math.Ceiling(words[iCheckWordLengths - 1].GetSizeF(drawing, maxWidth, sf).Width);
-
-						// Measure each word without regards to style.
-						Font currentFont = words[iCheckWordLengths].GetTextFont();
-						words[iCheckWordLengths].SetTextFont(font);
-						currentWordWidth = (int)Math.Ceiling(words[iCheckWordLengths].GetSizeF(drawing, maxWidth, sf).Width);
-						words[iCheckWordLengths].SetTextFont(currentFont);
-
-						// Trying to access past end of available words will throw an
-						// error that we will catch
-						if (words[iCheckWordLengths].GetText() == " ")
-						{
-							skippedSpace = true;
-							iCheckWordLengths++;
-						}
-						else if (lineLength + currentWordWidth + (skippedSpace ? previousSpaceWidth : 0) > maxWidth)
-						{
-							endOfLine = true;
-						}
-						else if (words[iCheckWordLengths].GetText() == "\n")
-						{
-							endOfLine = true;
-							iCheckWordLengths++;
-						}
-						else
-						{
-							lineLength += currentWordWidth + (skippedSpace ? previousSpaceWidth : 0);
-							skippedSpace = false;
-							iCheckWordLengths++;
-						}
-					}
-				}
-				catch (Exception ex)            
-				{                
-					if (ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException)
-					{
-						endOfText = true;
-					}
-					else
-						throw;
-				}
-
-				// Then, draw each word in the line
-				int currentX = (maxWidth - lineLength) / 2;
-				for (int i = iDraw; i < iCheckWordLengths; i++)
-				{
-					CardWord word = words[i];
-					int wordWidth = (int)Math.Ceiling(words[iDraw].GetSizeF(drawing, maxWidth, sf).Width);
-					drawing.DrawString(word.GetText(), word.GetTextFont(), word.GetTextBrush(), new RectangleF(currentX, startY + wordHeight * line, wordWidth, wordHeight), sf);
-					currentX += wordWidth;
-					iDraw++;
-				}
-				line++;
-			}
-
-			drawing.Save();
-
-			textBrush.Dispose();
-			drawing.Dispose();
-
-			// Ensure output directory exists and save per-element PNG
-			var relativeOutDir = Path.Combine("temp", "TextIntermediary");
-            var outDir = PathHelper.GetFullPath(relativeOutDir);
-			Directory.CreateDirectory(outDir);
-			var outpath = Path.Combine(outDir, $"{element}.png");
-			img.Save(outpath, ImageFormat.Png);
-			img.Dispose();
-		}
-
-		/// <summary>
 		/// Creates an image in TextIntermediary that contains the title.
 		/// </summary>
 		/// <param name="text">title text</param>
@@ -418,6 +245,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 			img.Dispose();
 		}
 
+		/// <summary>
+		/// Creates an image in TextIntermediary that contains the specified type.
+		/// </summary>
+		/// <param name="text">text to be drawn</param>
+		/// <param name="font">font to draw the text in</param>
+		/// <param name="textColor">color to draw the text in</param>
+		/// <param name="maxWidth">maximum width the text is allowed to take up</param>
+		/// <param name="maxHeight">maximum height the text is allowed to take up</param>
+		/// <param name="keywordsAndColors">a dictionary containing all the possible keywords and their colors</param>
 		public static void DrawType(string text, Font font, Color textColor, int maxWidth, int maxHeight, Dictionary<string, string> keywordsAndColors)
 		{
 			// For types, capitalize the text
@@ -488,6 +324,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 			img.Dispose();
 		}
 
+		/// <summary>
+		/// Creates an image in TextIntermediary that contains the specified corner element.
+		/// </summary>
+		/// <param name="text">text to include in the element</param>
+		/// <param name="font">font to draw the text with</param>
+		/// <param name="textColor">color to draw the text in</param>
+		/// <param name="element">which corner element this is (e.g. "Cost", "Strength", "TopRight", or "BottomRight")</param>
+		/// <param name="maxWidth">maximum width this element can take up</param>
+		/// <param name="maxHeight">maximum height this element can take up</param>
 		public static void DrawCornerElement(string text, Font font, Color textColor, string element, int maxWidth, int maxHeight)
 		{
 			// Set the stringformat flags for center alignment and no trimming
@@ -555,6 +400,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 			img.Dispose();
 		}
 
+		/// <summary>
+		/// Goes letter by letter to build words based on formatting rules.
+		/// </summary>
+		/// <param name="text">text to be converted</param>
+		/// <param name="defaultBrush">default text brush</param>
+		/// <param name="defaultFont">default text font</param>
+		/// <param name="keywordData">a dictionary of keywords and their associated colors</param>
+		/// <param name="isType">whether or not this is the type element</param>
+		/// <returns>a list of all words as CardWord objects</returns>
 		public static List<CardWord> GetCardWords(string text, Brush defaultBrush, Font defaultFont, Dictionary<string, string>? keywordData, bool isType = false)
 		{
 			// char italicSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "italicCharacter"));

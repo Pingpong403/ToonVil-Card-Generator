@@ -11,18 +11,24 @@ namespace ToonVil_Card_Generator.CardGeneration
         // Cache font collections so fonts remain valid for the app lifetime
         private static readonly Dictionary<string, PrivateFontCollection> s_collections = new();
 
-        // Loads an OTF/TTF from the project fonts folder and creates a Font
+        /// <summary>
+        /// Loads an OTF/TTF from the project fonts folder and creates a Font.
+        /// </summary>
+        /// <param name="fontFileName">the full file name for the font</param>
+        /// <param name="size">the size of the font</param>
+        /// <param name="style">the style of the font</param>
+        /// <param name="unit">the unit the font should be measured in</param>
+        /// <returns>the Font object with the specifications</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public static Font GetFont(string fontFileName, float size, FontStyle style = FontStyle.Regular, GraphicsUnit unit = GraphicsUnit.Pixel)
         {
             var relativePath = Path.Combine("fonts", fontFileName);
             var fontPath = PathHelper.GetFullPath(relativePath);
-
             if (!File.Exists(fontPath))
             {
                 // Fallback to current working dir (e.g., when running with dotnet run from project root)
-                fontPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "fonts", fontFileName));
+                fontPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), relativePath));
             }
-
             if (!File.Exists(fontPath))
             {
                 throw new FileNotFoundException($"Font file not found: {fontPath}");
