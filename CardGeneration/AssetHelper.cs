@@ -64,6 +64,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <returns></returns>
 		public static string GetAssetName(string assetCode)
 		{
+			string assetCharacter = ConfigHelper.GetConfigValue("text", "assetCharacter");
+			if (assetCode[^1].ToString() != assetCharacter) return "";
 			char[] letters = new char[assetCode.Length - 1];
 			for (int i = 0; i < assetCode.Length - 1; i++)
 			{

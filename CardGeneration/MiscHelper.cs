@@ -13,7 +13,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static List<string> GetTextFilesLines(string file)
 		{
 			List<string> lines = [];
-			string path = PathHelper.GetFullPath(Path.Combine("data", "-TextFiles", file + ".txt"));
+			string path = PathHelper.GetFullPath(Path.Combine("Card Data", "-TextFiles", file + ".txt"));
             if (!File.Exists(path))
             {
                 throw new FileNotFoundException($"Text file not found: {path}");
@@ -78,7 +78,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <returns>Whether or not given text is punctuation.</returns>
 		public static bool IsPunctuation(string text)
 		{
-			if (".?!,;:".Contains(text))
+			if (".?!,;:/".Contains(text))
 			{
 				return true;
 			}

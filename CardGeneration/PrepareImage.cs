@@ -19,16 +19,16 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static void SizeIcon()
 		{
 			// Get image into an object - look for png first, then jpg, then jpeg
-			var relativePath = Path.Combine("data", "-Images", "icon.png");
+			var relativePath = Path.Combine("Card Data", "-Images", "icon.png");
             var fullPath = PathHelper.GetFullPath(relativePath);
 			if (!File.Exists(fullPath))
 			{
-				relativePath = Path.Combine("data", "-Images", "icon.jpg");
+				relativePath = Path.Combine("Card Data", "-Images", "icon.jpg");
 				fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			if (!File.Exists(fullPath))
 			{
-				relativePath = Path.Combine("data", "-Images", "icon.jpeg");
+				relativePath = Path.Combine("Card Data", "-Images", "icon.jpeg");
 				fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			// If no image is found, exit
@@ -71,16 +71,16 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static void SizeCardImage(String imageName)
 		{
 			// Get image into an object - look for png first, then jpg, then jpeg
-			var relativePath = Path.Combine("data", "-Images", imageName + ".png");
+			var relativePath = Path.Combine("Card Data", "-Images", imageName + ".png");
             var fullPath = PathHelper.GetFullPath(relativePath);
 			if (!File.Exists(fullPath))
 			{
-				relativePath = Path.Combine("data", "-Images", imageName + ".jpg");
+				relativePath = Path.Combine("Card Data", "-Images", imageName + ".jpg");
                 fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			if (!File.Exists(fullPath))
 			{
-				relativePath = Path.Combine("data", "-Images", imageName + ".jpeg");
+				relativePath = Path.Combine("Card Data", "-Images", imageName + ".jpeg");
                 fullPath = PathHelper.GetFullPath(relativePath);
 			}
 			// If no image is found, continue on with black background
@@ -124,7 +124,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		{
 			var imageIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "ImageIntermediary"));
 			var textIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "TextIntermediary"));
-			var layoutPath = PathHelper.GetFullPath(Path.Combine("data", "-Layout"));
+			var layoutPath = PathHelper.GetFullPath(Path.Combine("Card Data", "-Layout"));
 			var assetsPath = PathHelper.GetFullPath("assets");
 
 			// Possible necessary elements: image, Title, Ability, Type,
@@ -251,7 +251,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 
 			// Ensure output directory exists and save completed card
-			var relativeOutDir = Path.Combine("data", "-Exports");
+			var relativeOutDir = Path.Combine("Card Data", "-Exports");
             var outDir = PathHelper.GetFullPath(relativeOutDir);
 			Directory.CreateDirectory(outDir);
 			var outpath = Path.Combine(outDir, $"{cardTitle}.png");

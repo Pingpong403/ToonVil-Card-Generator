@@ -85,6 +85,10 @@ class Program
                     if (topRight != "") DrawCornerElement(topRight, topRightFont, textColor, "TopRight", textAreaMaxWidth, textAreaMaxHeight);
                     if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, textColor, "BottomRight", textAreaMaxWidth, textAreaMaxHeight);
 
+                    while (MiscHelper.IsPunctuation(char.ToString(title[^1])))
+                    {
+                        title = title[0..^1];
+                    }
                     SizeCardImage(title);
                     CombineImages(title, deck);
                     CleanIntermediaries();
