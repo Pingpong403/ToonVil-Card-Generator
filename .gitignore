@@ -54,7 +54,7 @@ TestResult.xml
 nunit-*.xml
 
 # Because souce code isn't important to (most) Villainous fans
-#CardGeneration/*
-#*.cs
+[Cc]ardGeneration/
+*.cs
 *.csproj
 *.sln
