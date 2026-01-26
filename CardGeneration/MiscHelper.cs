@@ -23,7 +23,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			try
 			{
 				// Pass the file path to the StreamReader constructor
-				StreamReader sr = new StreamReader(path);
+				StreamReader sr = new(path);
 
 				// Read the first line of text
 				line = sr.ReadLine();
@@ -78,7 +78,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <returns>Whether or not given text is punctuation.</returns>
 		public static bool IsPunctuation(string text)
 		{
-			if (".?!,;:/".Contains(text))
+			if (".?!,;:/-".Contains(text))
 			{
 				return true;
 			}

@@ -416,7 +416,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			char newlineSymbol = Convert.ToChar(ConfigHelper.GetConfigValue("text", "newlineCharacter"));
 
 			// Font italicFont = new Font(defaultFont, FontStyle.Italic);
-			Font boldFont = new Font(defaultFont, FontStyle.Bold);
+			Font boldFont = new(defaultFont, FontStyle.Bold);
 
 			List<CardWord> cardWords = [];
 
@@ -432,7 +432,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					if (builtWord != "")
 					{
 						bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
-						CardWord word = new CardWord(
+						CardWord word = new(
 							builtWord,
 							isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
 							isKeyword && !ignoreFormatting ? boldFont : defaultFont
@@ -462,6 +462,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 						if (builtWord == "") ignoreFormatting = true;
 						builtWord += letter;
 					}
+					escapeNext = false;
 				}
 				else
 				{
@@ -478,7 +479,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 						if (builtWord != "")
 						{
 							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
-							CardWord word = new CardWord(
+							CardWord word = new(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
 								isKeyword && !ignoreFormatting ? boldFont : defaultFont
@@ -491,10 +492,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 					}
 					else
 					{
-						if (MiscHelper.IsPunctuation(Convert.ToString(letter)))
+						if (MiscHelper.IsPunctuation(Convert.ToString(letter)) && builtWord != "")
 						{
 							bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
-							CardWord word = new CardWord(
+							CardWord word = new(
 								builtWord,
 								isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
 								isKeyword && !ignoreFormatting ? boldFont : defaultFont
@@ -515,7 +516,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			if (builtWord != "")
 			{
 				bool isKeyword = keywordData != null && keywordData.TryGetValue(isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord, out string? value);
-				CardWord word = new CardWord(
+				CardWord word = new(
 					builtWord,
 					isKeyword && !ignoreFormatting ? new SolidBrush(Color.FromArgb(Convert.ToInt32("ff" + keywordData[isType ? MiscHelper.Capitalize(builtWord.ToLower()) : builtWord], 16))) : defaultBrush,
 					isKeyword && !ignoreFormatting ? boldFont : defaultFont
@@ -695,6 +696,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				if (escapeNext)
 				{
 					cleanText.Add(letter);
+					escapeNext = false;
 				}
 				else
 				{
@@ -788,7 +790,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			{
 				if (text == " ")
 				{
-					return drawing.MeasureString(text, textFont) * 0.68F;
+					return drawing.MeasureString(text, textFont) * 0.63F;
 				}
 				else if (isType)
 				{

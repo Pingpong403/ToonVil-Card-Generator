@@ -45,7 +45,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			int newWidth = Math.Max(1, (int)Math.Round(widthRatio * icon.Width));
 			int newHeight = Math.Max(1, (int)Math.Round(heightRatio * icon.Height));
 
-			using Bitmap b = new Bitmap(newWidth, newHeight);
+			using Bitmap b = new(newWidth, newHeight);
 			using Graphics g = Graphics.FromImage(b);
 			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -96,7 +96,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			int newWidth = Math.Max(1, (int)Math.Round(ratio * img.Width));
 			int newHeight = Math.Max(1, (int)Math.Round(ratio * img.Height));
 
-			using Bitmap b = new Bitmap(newWidth, newHeight);
+			using Bitmap b = new(newWidth, newHeight);
 			using Graphics g = Graphics.FromImage(b);
 			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -142,7 +142,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 
 			int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card", "w"));
 			int cardHeight = int.Parse(ConfigHelper.GetConfigValue("card", "h"));
-			using Bitmap b = new Bitmap(cardWidth, cardHeight);
+			using Bitmap b = new(cardWidth, cardHeight);
 			using Graphics g = Graphics.FromImage(b);
 			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			g.PixelOffsetMode = PixelOffsetMode.HighQuality;

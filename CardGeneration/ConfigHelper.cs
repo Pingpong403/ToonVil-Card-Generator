@@ -24,7 +24,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			try
 			{
 				// Pass the file path to the StreamReader constructor
-				StreamReader sr = new StreamReader(path);
+				StreamReader sr = new(path);
 
 				// Read the first line of text
 				line = sr.ReadLine();
@@ -69,12 +69,12 @@ namespace ToonVil_Card_Generator.CardGeneration
                 throw new FileNotFoundException($"Config file not found: {path}");
             }
 
-			Dictionary<string, string> pairs = new Dictionary<string, string>();
+			Dictionary<string, string> pairs = new();
 			string line;
 			try
 			{
 				// Pass the file path to the StreamReader constructor
-				StreamReader sr = new StreamReader(path);
+				StreamReader sr = new(path);
 
 				// Read the first line of text
 				line = sr.ReadLine();

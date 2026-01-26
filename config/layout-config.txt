@@ -1,9 +1,3 @@
-titleCenterX:
-titleCenterY:
-abilityCenterX:
-abilityCenterY:
-typeCenterX:
-typeCenterY:
 costCenterX:187
 costCenterY:191
 strengthCenterX:139
