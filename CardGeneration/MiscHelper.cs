@@ -56,6 +56,27 @@ namespace ToonVil_Card_Generator.CardGeneration
 		}
 
 		/// <summary>
+		/// Looks in -Layout for the given deck's card back.
+		/// </summary>
+		/// <param name="deck">the deck name</param>
+		/// <returns>whether or not the given card back exists</returns>
+		public static bool DeckExists(string deck)
+		{
+			string relativePath = Path.Combine("Card Data", "-Layout", deck + "Deck.png");
+			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+			{
+				relativePath = deck + "Deck.jpg";
+				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+				{
+					relativePath = deck + "Deck.jpeg";
+					return File.Exists(PathHelper.GetFullPath(relativePath));
+				}
+				return true;
+			}
+			return true;
+		}
+
+		/// <summary>
 		/// Helper method to capitalize just the first letter in a string.
 		/// </summary>
 		/// <param name="input">String to be capitalized</param>

@@ -122,141 +122,148 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <param name="deck">What deck the card belongs to (Villain, Fate, etc.)</param>
 		public static void CombineImages(string cardTitle, string deck)
 		{
-			var imageIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "ImageIntermediary"));
-			var textIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "TextIntermediary"));
-			var layoutPath = PathHelper.GetFullPath(Path.Combine("Card Data", "-Layout"));
-			var assetsPath = PathHelper.GetFullPath("assets");
-
-			// Possible necessary elements: image, Title, Ability, Type,
-			// Cost, Strength, TopRight, BottomRight
-			var imagePath = Path.Combine(imageIntermediaryPath, cardTitle + ".png");
-			var altImagePath = Path.Combine(assetsPath, "black_bg.png");
-			var titlePath = Path.Combine(textIntermediaryPath, "Title.png");
-			var abilityPath = Path.Combine(textIntermediaryPath, "Ability.png");
-			var typePath = Path.Combine(textIntermediaryPath, "Type.png");
-			var costPath = Path.Combine(textIntermediaryPath, "Cost.png");
-			var strengthPath = Path.Combine(textIntermediaryPath, "Strength.png");
-			var topRightElementPath = Path.Combine(textIntermediaryPath, "TopRight.png");
-			var iconPath = Path.Combine(imageIntermediaryPath, "icon.png");
-			var bottomRightElementPath = Path.Combine(textIntermediaryPath, "BottomRight.png");
-
-			int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card", "w"));
-			int cardHeight = int.Parse(ConfigHelper.GetConfigValue("card", "h"));
-			using Bitmap b = new(cardWidth, cardHeight);
-			using Graphics g = Graphics.FromImage(b);
-			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-			g.SmoothingMode = SmoothingMode.HighQuality;
-			g.CompositingQuality = CompositingQuality.HighQuality;
-
-			// Only draw any elements if all of the necessary elements are present
-			// Necessary elements: Title, Ability, Type
-			if (!(File.Exists(titlePath) && File.Exists(abilityPath) && File.Exists(typePath)))
+			string capitalizedDeck = MiscHelper.Capitalize(deck.ToLower());
+			if (!MiscHelper.DeckExists(capitalizedDeck))
 			{
-				Console.WriteLine($"Missing elements for {cardTitle}!");
-				return;
+				Console.WriteLine("Card template missing for " + capitalizedDeck + "deck!");
 			}
+			else
+			{
+				var imageIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "ImageIntermediary"));
+				var textIntermediaryPath = PathHelper.GetFullPath(Path.Combine("temp", "TextIntermediary"));
+				var layoutPath = PathHelper.GetFullPath(Path.Combine("Card Data", "-Layout"));
+				var assetsPath = PathHelper.GetFullPath("assets");
 
-			string capitalizedDeck = MiscHelper.Capitalize(deck);
-			// Card image
-			bool imageExists = File.Exists(imagePath);
-			using (Image cardImg = Image.FromFile(imageExists ? imagePath : altImagePath))
-			{
-				// get image width
-				int imgW = cardImg.Width;
-				// set xOffset to appropriate value
-				int xOffset = (cardWidth - imgW) / 2;
-				g.DrawImage(cardImg, xOffset, 0);
-			}
-			
-			// Deck background
-			using (Image bgImg = Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Deck.png")))
-			{
-				g.DrawImage(bgImg, new Rectangle(0, 0, cardWidth, cardHeight));
-			}
+				// Possible necessary elements: image, Title, Ability, Type,
+				// Cost, Strength, TopRight, BottomRight
+				var imagePath = Path.Combine(imageIntermediaryPath, cardTitle + ".png");
+				var altImagePath = Path.Combine(assetsPath, "black_bg.png");
+				var titlePath = Path.Combine(textIntermediaryPath, "Title.png");
+				var abilityPath = Path.Combine(textIntermediaryPath, "Ability.png");
+				var typePath = Path.Combine(textIntermediaryPath, "Type.png");
+				var costPath = Path.Combine(textIntermediaryPath, "Cost.png");
+				var strengthPath = Path.Combine(textIntermediaryPath, "Strength.png");
+				var topRightElementPath = Path.Combine(textIntermediaryPath, "TopRight.png");
+				var iconPath = Path.Combine(imageIntermediaryPath, "icon.png");
+				var bottomRightElementPath = Path.Combine(textIntermediaryPath, "BottomRight.png");
 
-			// Title
-			using (Image titleImg = Image.FromFile(titlePath))
-			{
-				g.DrawImage(titleImg, (cardWidth - titleImg.Width) / 2, 1152 - titleImg.Height / 2);
-			}
-			
-			// Ability
-			using (Image abilityImg = Image.FromFile(abilityPath))
-			{
-				g.DrawImage(abilityImg, (cardWidth - abilityImg.Width) / 2, 1618 - abilityImg.Height / 2);
-			}
+				int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card", "w"));
+				int cardHeight = int.Parse(ConfigHelper.GetConfigValue("card", "h"));
+				using Bitmap b = new(cardWidth, cardHeight);
+				using Graphics g = Graphics.FromImage(b);
+				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+				g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+				g.SmoothingMode = SmoothingMode.HighQuality;
+				g.CompositingQuality = CompositingQuality.HighQuality;
 
-			// Type
-			using (Image typeImg = Image.FromFile(typePath))
-			{
-				g.DrawImage(typeImg, (cardWidth - typeImg.Width) / 2, 1986 - typeImg.Height / 2);
-			}
-			
-			// Cost
-			if (File.Exists(costPath))
-			{
-				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Cost.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-				using (Image costImg = Image.FromFile(costPath))
+				// Only draw any elements if all of the necessary elements are present
+				// Necessary elements: Title, Ability, Type
+				if (!(File.Exists(titlePath) && File.Exists(abilityPath) && File.Exists(typePath)))
 				{
-					int costX = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterX")) - costImg.Width / 2;
-					int costY = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterY")) - costImg.Height / 2;
-					g.DrawImage(costImg, costX, costY);
+					Console.WriteLine($"Missing elements for {cardTitle}!");
+					return;
 				}
-			}
-			
-			// Strength
-			if (File.Exists(strengthPath))
-			{
-				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Strength.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-				using (Image strImg = Image.FromFile(strengthPath))
-				{
-					int strX = int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterX")) - strImg.Width / 2;
-					int strY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterY")) - strImg.Height / 2;
-					g.DrawImage(strImg, strX, strY);
-				}
-			}
 
-			// Top Right Element
-			if (File.Exists(topRightElementPath))
-			{
-				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "TopRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-				using (Image topRightImg = Image.FromFile(topRightElementPath))
+				// Card image
+				bool imageExists = File.Exists(imagePath);
+				using (Image cardImg = Image.FromFile(imageExists ? imagePath : altImagePath))
 				{
-					int topRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterX")) - topRightImg.Width / 2;
-					int topRightY = int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterY")) - topRightImg.Height / 2;
-					g.DrawImage(topRightImg, topRightX, topRightY);
+					// get image width
+					int imgW = cardImg.Width;
+					// set xOffset to appropriate value
+					int xOffset = (cardWidth - imgW) / 2;
+					g.DrawImage(cardImg, xOffset, 0);
 				}
-			}
+				
+				// Deck background
+				using (Image bgImg = Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Deck.png")))
+				{
+					g.DrawImage(bgImg, new Rectangle(0, 0, cardWidth, cardHeight));
+				}
 
-			// Bottom Right Element
-			// ToonVil: if exists, use value given. otherwise, use icon.png
-			if (File.Exists(bottomRightElementPath))
-			{
-				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-				using (Image bottomRightImg = Image.FromFile(bottomRightElementPath))
+				// Title
+				using (Image titleImg = Image.FromFile(titlePath))
 				{
-					int bottomRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterX")) - bottomRightImg.Width / 2;
-					int bottomRightY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterY")) - bottomRightImg.Height / 2;
-					g.DrawImage(bottomRightImg, bottomRightX, bottomRightY);
+					g.DrawImage(titleImg, (cardWidth - titleImg.Width) / 2, 1152 - titleImg.Height / 2);
 				}
-			}
-			else if (File.Exists(iconPath))
-			{
-				g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-				using (Image iconImg = Image.FromFile(iconPath))
+				
+				// Ability
+				using (Image abilityImg = Image.FromFile(abilityPath))
 				{
-					g.DrawImage(iconImg, cardWidth - 213, cardHeight - 214);
+					g.DrawImage(abilityImg, (cardWidth - abilityImg.Width) / 2, 1618 - abilityImg.Height / 2);
 				}
-			}
 
-			// Ensure output directory exists and save completed card
-			var relativeOutDir = Path.Combine("Card Data", "-Exports");
-            var outDir = PathHelper.GetFullPath(relativeOutDir);
-			Directory.CreateDirectory(outDir);
-			var outpath = Path.Combine(outDir, $"{cardTitle}.png");
-			b.Save(outpath, ImageFormat.Png);
-			Console.WriteLine($"Image saved: {cardTitle}");
+				// Type
+				using (Image typeImg = Image.FromFile(typePath))
+				{
+					g.DrawImage(typeImg, (cardWidth - typeImg.Width) / 2, 1986 - typeImg.Height / 2);
+				}
+				
+				// Cost
+				if (File.Exists(costPath))
+				{
+					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Cost.png")), new Rectangle(0, 0, cardWidth, cardHeight));
+					using (Image costImg = Image.FromFile(costPath))
+					{
+						int costX = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterX")) - costImg.Width / 2;
+						int costY = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterY")) - costImg.Height / 2;
+						g.DrawImage(costImg, costX, costY);
+					}
+				}
+				
+				// Strength
+				if (File.Exists(strengthPath))
+				{
+					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Strength.png")), new Rectangle(0, 0, cardWidth, cardHeight));
+					using (Image strImg = Image.FromFile(strengthPath))
+					{
+						int strX = int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterX")) - strImg.Width / 2;
+						int strY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterY")) - strImg.Height / 2;
+						g.DrawImage(strImg, strX, strY);
+					}
+				}
+
+				// Top Right Element
+				if (File.Exists(topRightElementPath))
+				{
+					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "TopRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
+					using (Image topRightImg = Image.FromFile(topRightElementPath))
+					{
+						int topRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterX")) - topRightImg.Width / 2;
+						int topRightY = int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterY")) - topRightImg.Height / 2;
+						g.DrawImage(topRightImg, topRightX, topRightY);
+					}
+				}
+
+				// Bottom Right Element
+				// ToonVil: if exists, use value given. otherwise, use icon.png
+				if (File.Exists(bottomRightElementPath))
+				{
+					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
+					using (Image bottomRightImg = Image.FromFile(bottomRightElementPath))
+					{
+						int bottomRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterX")) - bottomRightImg.Width / 2;
+						int bottomRightY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterY")) - bottomRightImg.Height / 2;
+						g.DrawImage(bottomRightImg, bottomRightX, bottomRightY);
+					}
+				}
+				else if (File.Exists(iconPath))
+				{
+					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
+					using (Image iconImg = Image.FromFile(iconPath))
+					{
+						g.DrawImage(iconImg, cardWidth - 213, cardHeight - 214);
+					}
+				}
+
+				// Ensure output directory exists and save completed card
+				var relativeOutDir = Path.Combine("Card Data", "-Exports");
+				var outDir = PathHelper.GetFullPath(relativeOutDir);
+				Directory.CreateDirectory(outDir);
+				var outpath = Path.Combine(outDir, $"{cardTitle}.png");
+				b.Save(outpath, ImageFormat.Png);
+				Console.WriteLine($"Image saved: {cardTitle}");
+			}
 		}
 
 		/// <summary>

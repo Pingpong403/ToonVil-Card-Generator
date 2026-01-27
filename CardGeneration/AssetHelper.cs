@@ -5,29 +5,30 @@ namespace ToonVil_Card_Generator.CardGeneration
 	public static class AssetHelper
 	{
 		/// <summary>
-		/// Checks whether the given asset name exists.
+		/// Checks whether the given asset exists.
 		/// </summary>
-		/// <param name="assetName">the name of the asset, not including the asset symbol</param>
+		/// <param name="assetCode">the name of the asset, including the asset symbol</param>
 		/// <returns>whether or not the given asset was found in the assets folder</returns>
-		public static bool AssetExists(string assetName)
+		public static bool AssetExists(string assetCode, bool lenient = false)
 		{
+			string assetName;
+			if (lenient)
+			{
+				string assetCharacter = ConfigHelper.GetConfigValue("text", "assetCharacter");
+				if (assetCode[^1].ToString() != assetCharacter)
+				{
+					assetCode += '_';
+				}
+			}
+			assetName = GetAssetName(assetCode);
+			if (assetName == "") return false;
 			if (GainPowerAmount(assetName) != "")
 			{
 				assetName = "GainPower";
 			}
 			string pathNoExt = Path.Combine("assets", assetName);
-			string relativePath = pathNoExt + ".png";
-			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
-			{
-				relativePath = pathNoExt + ".jpg";
-				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
-				{
-					relativePath = pathNoExt + ".jpeg";
-					return File.Exists(PathHelper.GetFullPath(relativePath));
-				}
-				return true;
-			}
-			return true;
+			string relativePath = pathNoExt + FindExtension(assetName);
+			return File.Exists(PathHelper.GetFullPath(relativePath));
 		}
 
 		/// <summary>
@@ -62,10 +63,11 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// </summary>
 		/// <param name="assetCode">the code for the asset, including the asset symbol</param>
 		/// <returns></returns>
-		public static string GetAssetName(string assetCode)
+		public static string GetAssetName(string assetCode, bool lenient = false)
 		{
+			if (assetCode == "") return "";
 			string assetCharacter = ConfigHelper.GetConfigValue("text", "assetCharacter");
-			if (assetCode[^1].ToString() != assetCharacter) return "";
+			if (assetCode[^1].ToString() != assetCharacter) return lenient ? assetCode : "";
 			char[] letters = new char[assetCode.Length - 1];
 			for (int i = 0; i < assetCode.Length - 1; i++)
 			{

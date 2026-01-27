@@ -201,9 +201,9 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 
 			// Finally, draw the gained action
-			if (gainsAction != "" && AssetHelper.AssetExists(gainsAction))
+			if (gainsAction != "" && AssetHelper.AssetExists(gainsAction, true))
 			{
-				string assetName = gainsAction;
+				string assetName = AssetHelper.GetAssetName(gainsAction, true);
 				string gainPowerAmt = AssetHelper.GainPowerAmount(assetName);
 				if (gainPowerAmt != "")
 				{
@@ -592,7 +592,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 								endOfLine = true;
 								iCheckWordLengths++;
 							}
-							else if (AssetHelper.AssetExists(AssetHelper.GetAssetName(words[iCheckWordLengths].GetText())))
+							else if (AssetHelper.AssetExists(words[iCheckWordLengths].GetText()))
 							{
 								endOfLine = true;
 								linesToSkip = string.Equals(words[iCheckWordLengths].GetText(), "DividingLine_") ? (int)dlLines : (int)asLines;
@@ -714,7 +714,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					}
 					else if (letter == assetSymbol)
 					{
-						if (AssetHelper.AssetExists(storedWord))
+						if (AssetHelper.AssetExists(storedWord + assetSymbol))
 						{
 							for (int _ = 0; _ < storedWord.Length; _++)
 							{

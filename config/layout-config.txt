@@ -1,5 +1,5 @@
-costCenterX:187
-costCenterY:191
+costCenterX:189
+costCenterY:195
 strengthCenterX:139
 strengthCenterY:139
 topRightCenterX:187
