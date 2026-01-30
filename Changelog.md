@@ -10,3 +10,8 @@
 - more visually centered the cost value
 - fixed Gains Action Symbol field to allow an underscore
 - updated the tutorial to be more helpful
+
+## v1.2
+- element positioning is now fully configurable
+- line spacing and word distance are now configurable
+- the generator no longer handles drawing the icon

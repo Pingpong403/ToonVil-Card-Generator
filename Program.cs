@@ -21,15 +21,13 @@ class Program
     {
         Console.WriteLine("ToonVil Card Generator");
         
-        // Setup variables and clean intermediaries
+        // Setup variables
         Color textColor = ColorTranslator.FromHtml("#d7b06c");
         int titleAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "titleAreaMaxHeight"));
         int textAreaMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth"));
         int textAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "abilityAreaMaxHeight"));
         int typeAreaMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "typeAreaMaxWidth"));
         int typeAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "typeAreaMaxHeight"));
-        SizeIcon();
-        CleanIntermediaries();
 
         // Load all the fonts
         string titleFontFile = ConfigHelper.GetConfigValue("text", "titleFont");
@@ -54,7 +52,11 @@ class Program
         bool repeat = true;
         while (repeat)
         {
+            // Initial cleanup
+            CleanIntermediaries();
+
             repeat = false;
+
             // Load all the keywords and their colors
             Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();
 
@@ -100,10 +102,10 @@ class Program
                 }
             }
 
-            // Cleanup
-            CleanImageIntermediaryFinal();
+            // Final cleanup
+            CleanIntermediaries();
 
-            Console.WriteLine("Cards generation done. Press ENTER to repeat, close this window to exit.");
+            Console.WriteLine("Card generation done. Press ENTER to repeat, close this window to exit.");
             string? input = Console.ReadLine();
             repeat = true;
         }

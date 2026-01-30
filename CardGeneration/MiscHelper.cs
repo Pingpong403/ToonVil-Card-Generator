@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 
 namespace ToonVil_Card_Generator.CardGeneration
 {
@@ -53,6 +54,13 @@ namespace ToonVil_Card_Generator.CardGeneration
 			}
 
 			return lines;
+		}
+
+		public static Point GetElementPos(string element)
+		{
+			int elementCenterX = int.Parse(ConfigHelper.GetConfigValue("layout", element + "CenterX"));
+			int elementCenterY = int.Parse(ConfigHelper.GetConfigValue("layout", element + "CenterY"));
+			return new Point(elementCenterX, elementCenterY);
 		}
 
 		/// <summary>

@@ -12,58 +12,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 	public static class PrepareImage
 	{
 		/// <summary>
-		/// Produce a properly sized image, ready to be inserted onto card, from any size
-		/// </summary>
-		/// <param name="imageName">The name of the image file, not including extension</param>
-		/// <meta>Original code from https://www.c-sharpcorner.com/UploadFile/ishbandhu2009/resize-an-image-in-C-Sharp/</meta>
-		public static void SizeIcon()
-		{
-			// Get image into an object - look for png first, then jpg, then jpeg
-			var relativePath = Path.Combine("Card Data", "-Images", "icon.png");
-            var fullPath = PathHelper.GetFullPath(relativePath);
-			if (!File.Exists(fullPath))
-			{
-				relativePath = Path.Combine("Card Data", "-Images", "icon.jpg");
-				fullPath = PathHelper.GetFullPath(relativePath);
-			}
-			if (!File.Exists(fullPath))
-			{
-				relativePath = Path.Combine("Card Data", "-Images", "icon.jpeg");
-				fullPath = PathHelper.GetFullPath(relativePath);
-			}
-			// If no image is found, exit
-			if (!File.Exists(fullPath))
-			{
-				return;
-			}
-			using Image icon = Image.FromFile(fullPath);
-
-			// Calculate new width and height using float math to avoid integer truncation
-			float targetWidthHeight = 149;
-			float widthRatio = targetWidthHeight / icon.Width;
-			float heightRatio = targetWidthHeight / icon.Height;
-			int newWidth = Math.Max(1, (int)Math.Round(widthRatio * icon.Width));
-			int newHeight = Math.Max(1, (int)Math.Round(heightRatio * icon.Height));
-
-			using Bitmap b = new(newWidth, newHeight);
-			using Graphics g = Graphics.FromImage(b);
-			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-			g.SmoothingMode = SmoothingMode.HighQuality;
-			g.CompositingQuality = CompositingQuality.HighQuality;
-
-			// Draw image with new width and height
-			g.DrawImage(icon, 0, 0, newWidth, newHeight);
-
-			// Ensure output directory exists and save resized PNG
-			var relativeOutDir = Path.Combine("temp", "ImageIntermediary");
-            var outDir = PathHelper.GetFullPath(relativeOutDir);
-			Directory.CreateDirectory(outDir);
-			var outpath = Path.Combine(outDir, "icon.png");
-			b.Save(outpath, ImageFormat.Png);
-		}
-
-		/// <summary>
 		/// Produce a properly sized card image, ready to be inserted onto card, from any size
 		/// </summary>
 		/// <param name="imageName">The name of the image file, not including extension</param>
@@ -144,7 +92,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 				var costPath = Path.Combine(textIntermediaryPath, "Cost.png");
 				var strengthPath = Path.Combine(textIntermediaryPath, "Strength.png");
 				var topRightElementPath = Path.Combine(textIntermediaryPath, "TopRight.png");
-				var iconPath = Path.Combine(imageIntermediaryPath, "icon.png");
 				var bottomRightElementPath = Path.Combine(textIntermediaryPath, "BottomRight.png");
 
 				int cardWidth = int.Parse(ConfigHelper.GetConfigValue("card", "w"));
@@ -184,19 +131,22 @@ namespace ToonVil_Card_Generator.CardGeneration
 				// Title
 				using (Image titleImg = Image.FromFile(titlePath))
 				{
-					g.DrawImage(titleImg, (cardWidth - titleImg.Width) / 2, 1152 - titleImg.Height / 2);
+					Point titleCenter = MiscHelper.GetElementPos("title");
+					g.DrawImage(titleImg, titleCenter.X - titleImg.Width / 2, titleCenter.Y - titleImg.Height / 2);
 				}
 				
 				// Ability
 				using (Image abilityImg = Image.FromFile(abilityPath))
 				{
-					g.DrawImage(abilityImg, (cardWidth - abilityImg.Width) / 2, 1618 - abilityImg.Height / 2);
+					Point abilityCenter = MiscHelper.GetElementPos("ability");
+					g.DrawImage(abilityImg, abilityCenter.X - abilityImg.Width / 2, abilityCenter.Y - abilityImg.Height / 2);
 				}
 
 				// Type
 				using (Image typeImg = Image.FromFile(typePath))
 				{
-					g.DrawImage(typeImg, (cardWidth - typeImg.Width) / 2, 1986 - typeImg.Height / 2);
+					Point typeCenter = MiscHelper.GetElementPos("type");
+					g.DrawImage(typeImg, typeCenter.X - typeImg.Width / 2, typeCenter.Y - typeImg.Height / 2);
 				}
 				
 				// Cost
@@ -205,9 +155,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Cost.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 					using (Image costImg = Image.FromFile(costPath))
 					{
-						int costX = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterX")) - costImg.Width / 2;
-						int costY = int.Parse(ConfigHelper.GetConfigValue("layout", "costCenterY")) - costImg.Height / 2;
-						g.DrawImage(costImg, costX, costY);
+						Point costCenter = MiscHelper.GetElementPos("cost");
+						g.DrawImage(costImg, costCenter.X - costImg.Width / 2, costCenter.Y - costImg.Height / 2);
 					}
 				}
 				
@@ -215,11 +164,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 				if (File.Exists(strengthPath))
 				{
 					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "Strength.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-					using (Image strImg = Image.FromFile(strengthPath))
+					using (Image strengthImg = Image.FromFile(strengthPath))
 					{
-						int strX = int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterX")) - strImg.Width / 2;
-						int strY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "strengthCenterY")) - strImg.Height / 2;
-						g.DrawImage(strImg, strX, strY);
+						Point strengthCenter = MiscHelper.GetElementPos("strength");
+						g.DrawImage(strengthImg, strengthCenter.X - strengthImg.Width / 2, strengthCenter.Y - strengthImg.Height / 2);
 					}
 				}
 
@@ -229,30 +177,19 @@ namespace ToonVil_Card_Generator.CardGeneration
 					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "TopRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 					using (Image topRightImg = Image.FromFile(topRightElementPath))
 					{
-						int topRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterX")) - topRightImg.Width / 2;
-						int topRightY = int.Parse(ConfigHelper.GetConfigValue("layout", "topRightCenterY")) - topRightImg.Height / 2;
-						g.DrawImage(topRightImg, topRightX, topRightY);
+						Point topRightCenter = MiscHelper.GetElementPos("topRight");
+						g.DrawImage(topRightImg, topRightCenter.X - topRightImg.Width / 2, topRightCenter.Y - topRightImg.Height / 2);
 					}
 				}
 
 				// Bottom Right Element
-				// ToonVil: if exists, use value given. otherwise, use icon.png
 				if (File.Exists(bottomRightElementPath))
 				{
 					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
 					using (Image bottomRightImg = Image.FromFile(bottomRightElementPath))
 					{
-						int bottomRightX = cardWidth - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterX")) - bottomRightImg.Width / 2;
-						int bottomRightY = cardHeight - int.Parse(ConfigHelper.GetConfigValue("layout", "bottomRightCenterY")) - bottomRightImg.Height / 2;
-						g.DrawImage(bottomRightImg, bottomRightX, bottomRightY);
-					}
-				}
-				else if (File.Exists(iconPath))
-				{
-					g.DrawImage(Image.FromFile(Path.Combine(layoutPath, capitalizedDeck + "BottomRight.png")), new Rectangle(0, 0, cardWidth, cardHeight));
-					using (Image iconImg = Image.FromFile(iconPath))
-					{
-						g.DrawImage(iconImg, cardWidth - 213, cardHeight - 214);
+						Point bottomRightCenter = MiscHelper.GetElementPos("bottomRight");
+						g.DrawImage(bottomRightImg, bottomRightCenter.X - bottomRightImg.Width / 2, bottomRightCenter.Y - bottomRightImg.Height / 2);
 					}
 				}
 
@@ -267,7 +204,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		}
 
 		/// <summary>
-		/// Deletes all files in each intermediary directory except for the icon.
+		/// Deletes all files in each intermediary directory.
 		/// </summary>
 		public static void CleanIntermediaries()
 		{
@@ -277,27 +214,12 @@ namespace ToonVil_Card_Generator.CardGeneration
 			var imageIntermediaryDI = new DirectoryInfo(imageIntermediaryPath);
 			foreach (FileInfo fi in imageIntermediaryDI.EnumerateFiles())
 			{
-				if (fi.Extension == ".png" && fi.Name != "icon.png") fi.Delete();
+				if (fi.Extension == ".png") fi.Delete();
 			}
 			var textIntermediaryDI = new DirectoryInfo(textIntermediaryPath);
 			foreach (FileInfo fi in textIntermediaryDI.EnumerateFiles())
 			{
 				if (fi.Extension == ".png") fi.Delete();
-			}
-		}
-
-		/// <summary>
-		/// Cleans all images in the image intermediary, including the icon.
-		/// </summary>
-		public static void CleanImageIntermediaryFinal()
-		{
-			var relativePath = Path.Combine("temp", "ImageIntermediary");
-			var imageIntermediaryPath = PathHelper.GetFullPath(relativePath);
-
-			var imageIntermediaryDI = new DirectoryInfo(imageIntermediaryPath);
-			foreach (FileInfo fi in imageIntermediaryDI.EnumerateFiles())
-			{
-				if (fi.Extension != ".txt") fi.Delete();
 			}
 		}
 	}

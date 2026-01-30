@@ -107,6 +107,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// Set up variables we'll potentially need
 			float dividingLineLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float actionSymbolLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
+			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
 
 			// Set the stringformat flags for center alignment and no trimming
 			StringFormat sf = StringFormat.GenericTypographic;
@@ -141,9 +142,9 @@ namespace ToonVil_Card_Generator.CardGeneration
 			do
 			{
 				// Combine every given ability into one metric
-				lineHeight = drawing.MeasureString("Tq", font, maxWidth, sf).Height;
-				abilityHeight = ability == "" ? 0 : drawing.MeasureString(GetCleanText(ability), font, maxWidth, sf).Height;
-				activateAbilityHeight = (activateAbility == "" && activateCost == "") ? 0 : actionSymbolLines * lineHeight + (activateAbility == "" ? 0 : drawing.MeasureString(GetCleanText(activateAbility), font, maxWidth, sf).Height);
+				lineHeight = drawing.MeasureString("Tq", font, maxWidth, sf).Height * lineSpacing;
+				abilityHeight = ability == "" ? 0 : drawing.MeasureString(GetCleanText(ability), font, maxWidth, sf).Height * lineSpacing;
+				activateAbilityHeight = (activateAbility == "" && activateCost == "") ? 0 : actionSymbolLines * lineHeight + (activateAbility == "" ? 0 : drawing.MeasureString(GetCleanText(activateAbility), font, maxWidth, sf).Height) * lineSpacing;
 				gainsActionHeight = gainsAction == "" ? 0 : actionSymbolLines * lineHeight;
 				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight;
 
@@ -545,6 +546,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// Set up variables we'll potentially need
 			float dlLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float asLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
+			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
 
 			// Draw text word by word
 			float currentY = startY;
@@ -648,7 +650,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 						iDraw++;
 					}
 				}
-				currentY += wordH;
+				currentY += wordH * lineSpacing;
 			}
 			return currentY;
 		}
@@ -790,7 +792,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			{
 				if (text == " ")
 				{
-					return drawing.MeasureString(text, textFont) * 0.63F;
+					return drawing.MeasureString(text, textFont) * float.Parse(ConfigHelper.GetConfigValue("text", "spaceShrink"));
 				}
 				else if (isType)
 				{
