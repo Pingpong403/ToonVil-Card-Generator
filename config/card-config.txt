@@ -5,6 +5,7 @@ textAreaMaxWidth:1230
 titleAreaMaxHeight:166
 abilityAreaMaxHeight:655
 activateCostAreaMaxWidth:670
+sideActivateAbilityMaxWidth:800
 abilityCenterY:1618
 typeAreaMaxWidth:428
 typeAreaMaxHeight:166

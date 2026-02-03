@@ -194,7 +194,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 				}
 
 				// Ensure output directory exists and save completed card
-				var relativeOutDir = Path.Combine("Card Data", "-Exports");
+				bool saveByDeck = SettingsHelper.GetSettingsValue("Data", "exportByDeck") == "true";
+				var relativeOutDir = Path.Combine("Card Data", "-Exports", saveByDeck ? deck : "");
 				var outDir = PathHelper.GetFullPath(relativeOutDir);
 				Directory.CreateDirectory(outDir);
 				var outpath = Path.Combine(outDir, $"{cardTitle}.png");

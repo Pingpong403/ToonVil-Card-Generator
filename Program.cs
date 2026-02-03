@@ -23,11 +23,18 @@ class Program
         
         // Setup variables
         Color textColor = ColorTranslator.FromHtml("#d7b06c");
+        int titleAreaMaxWidth = SettingsHelper.GetSettingsValue("Card", "titleMaxWidth") == "" ?
+            int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth")) :
+            int.Parse(SettingsHelper.GetSettingsValue("Card", "titleMaxWidth"));
         int titleAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "titleAreaMaxHeight"));
-        int textAreaMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth"));
-        int textAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "abilityAreaMaxHeight"));
-        int typeAreaMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "typeAreaMaxWidth"));
+        int abilityAreaMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth"));
+        int abilityAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "abilityAreaMaxHeight"));
+        int typeAreaMaxWidth = SettingsHelper.GetSettingsValue("Card", "typeMaxWidth") == "" ?
+            int.Parse(ConfigHelper.GetConfigValue("card", "typeAreaMaxWidth")) :
+            int.Parse(SettingsHelper.GetSettingsValue("Card", "typeMaxWidth"));
         int typeAreaMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "typeAreaMaxHeight"));
+        int cornerElementMaxWidth = int.Parse(ConfigHelper.GetConfigValue("card", "cornerElementMaxWidth"));
+        int cornerElementMaxHeight = int.Parse(ConfigHelper.GetConfigValue("card", "cornerElementMaxHeight"));
 
         // Load all the fonts
         string titleFontFile = ConfigHelper.GetConfigValue("text", "titleFont");
@@ -81,15 +88,15 @@ class Program
                     string gainsAction = cardSplit[10];
 
                     // Skip cards that do not have all the necessary elements
-                    if (title != "" && (ability == "" || activateAbility == "" || activateCost == "") && type != "")
+                    if (title != "" && (ability != "" || activateAbility != "" || activateCost != "" || gainsAction != "") && type != "")
                     {
-                        DrawTitle(title, titleFont, textColor, textAreaMaxWidth, titleAreaMaxHeight);
-                        DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, textColor, textAreaMaxWidth, textAreaMaxHeight, keywordsAndColors);
+                        DrawTitle(title, titleFont, textColor, titleAreaMaxWidth, titleAreaMaxHeight);
+                        DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, textColor, abilityAreaMaxWidth, abilityAreaMaxHeight, keywordsAndColors);
                         DrawType(type, typeFont, textColor, typeAreaMaxWidth, typeAreaMaxHeight, keywordsAndColors);
-                        if (cost != "") DrawCornerElement(cost, costFont, textColor, "Cost", textAreaMaxWidth, textAreaMaxHeight);
-                        if (strength != "") DrawCornerElement(strength, strengthFont, textColor, "Strength", textAreaMaxWidth, textAreaMaxHeight);
-                        if (topRight != "") DrawCornerElement(topRight, topRightFont, textColor, "TopRight", textAreaMaxWidth, textAreaMaxHeight);
-                        if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, textColor, "BottomRight", textAreaMaxWidth, textAreaMaxHeight);
+                        if (cost != "") DrawCornerElement(cost, costFont, textColor, "Cost", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (strength != "") DrawCornerElement(strength, strengthFont, textColor, "Strength", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (topRight != "") DrawCornerElement(topRight, topRightFont, textColor, "TopRight", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, textColor, "BottomRight", cornerElementMaxWidth, cornerElementMaxHeight);
 
                         while (MiscHelper.IsPunctuation(char.ToString(title[^1])))
                         {
