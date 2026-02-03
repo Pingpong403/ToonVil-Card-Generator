@@ -17,5 +17,6 @@
 
 # v2.0 Text drawing improvements
 - refactored text measuring
+- implemented italics using *
 - when an Activated Ability is below text, it will go to the right side
 - introduced the -Settings folder
