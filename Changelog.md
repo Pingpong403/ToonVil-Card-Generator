@@ -1,5 +1,4 @@
-## v1.0
-- Generator released
+# v1.0 Generator released
 
 ## v1.1
 - added option to repeat generation process immediately after completion
@@ -15,3 +14,8 @@
 - element positioning is now fully configurable
 - line spacing and word distance are now configurable
 - the generator no longer handles drawing the icon
+
+# v2.0 Text drawing improvements
+- refactored text measuring
+- when an Activated Ability is below text, it will go to the right side
+- introduced the -Settings folder
