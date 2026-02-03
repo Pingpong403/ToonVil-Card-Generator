@@ -73,7 +73,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			string capitalizedDeck = MiscHelper.Capitalize(deck.ToLower());
 			if (!MiscHelper.DeckExists(capitalizedDeck))
 			{
-				Console.WriteLine("Card template missing for " + capitalizedDeck + "deck!");
+				Console.WriteLine("Card template missing for " + capitalizedDeck + " deck!");
 			}
 			else
 			{
