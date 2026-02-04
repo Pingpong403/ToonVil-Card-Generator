@@ -1,10 +1,51 @@
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace ToonVil_Card_Generator.CardGeneration
 {
 	public static class MiscHelper
 	{
+		/// <summary>
+		/// Run this check before the generator is run to ensure the executable is in the right spot
+		/// within the project, and all the necessary directories exist.
+		/// </summary>
+		/// <returns>whether or not the proper file structure exists</returns>
+		public static bool CheckStructure()
+		{
+			// 1, 2, 4, 8, 16, 32 - higher number, more extreme
+			int infractions = 0;
+			if (!Directory.Exists(PathHelper.GetFullPath("config"))) infractions += 32;
+			if (!Directory.Exists(PathHelper.GetFullPath("assets"))) infractions += 16;
+			if (!Directory.Exists(PathHelper.GetFullPath("fonts"))) infractions += 8;
+			if (!Directory.Exists(PathHelper.GetFullPath("Card Data"))) infractions += 7;
+			else
+			{
+				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-TextFiles")))) infractions += 4;
+				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-Layout")))) infractions += 2;
+				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-Images")))) infractions += 1;
+			}
+			switch (infractions)
+			{
+				case 63:
+					Console.WriteLine("Executable is not in project root. Please relocate to ToonVil-Card-Generator folder.");
+					return false;
+				case int n when n < 63 && n >= 8:
+					Console.WriteLine("Missing one or more vital configuration folders. Please redownload or relocate missing folders to the ToonVil-Card-Generator folder.");
+					return false;
+				case 7:
+					Console.WriteLine("Missing Card Data folder. Please redownload or relocate the folder to the ToonVil-Card-Generator folder.");
+					return false;
+				case int n when n < 7 && n >= 1:
+					Console.WriteLine("Missing one or more vital Card Data folders. Please ensure -TextFiles, -Layout, and -Images are placed in Card Data.");
+					return false;
+				case 0:
+					return true;
+				default:
+					return false;
+			}
+		}
+
 		/// <summary>
 		/// Gets all the lines in a given -TextFiles sub-directory.
 		/// </summary>
@@ -64,24 +105,52 @@ namespace ToonVil_Card_Generator.CardGeneration
 		}
 
 		/// <summary>
-		/// Looks in -Layout for the given deck's card back.
+		/// Looks in -Layout for the given deck element.
 		/// </summary>
 		/// <param name="deck">the deck name</param>
-		/// <returns>whether or not the given card back exists</returns>
-		public static bool DeckExists(string deck)
+		/// <param name="element">the element name</param>
+		/// <returns>whether or not the given deck element exists</returns>
+		public static bool ElementExists(string deck, string element)
 		{
-			string relativePath = Path.Combine("Card Data", "-Layout", deck + "Deck.png");
+			string relativePath = Path.Combine("Card Data", "-Layout", deck + element + ".png");
 			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 			{
-				relativePath = deck + "Deck.jpg";
+				relativePath = deck + element + ".jpg";
 				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
 				{
-					relativePath = deck + "Deck.jpeg";
+					relativePath = deck + element + ".jpeg";
 					return File.Exists(PathHelper.GetFullPath(relativePath));
 				}
 				return true;
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Returns the extension belonging to this asset name.
+		/// </summary>
+		/// <param name="assetName">asset name to find the extension of</param>
+		/// <returns>the extension, whether .png, .jpg, or .jpeg, of the asset found, or ""</returns>
+		public static string FindExtension(string dir, string fileName)
+		{
+			string pathNoExt = Path.Combine(dir, fileName);
+			string ext = ".png";
+			string relativePath = pathNoExt + ext;
+			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+			{
+				ext = ".jpg";
+				relativePath = pathNoExt + ext;
+				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+				{
+					ext = ".jpeg";
+					relativePath = pathNoExt + ext;
+					if (!File.Exists(PathHelper.GetFullPath(relativePath)))
+					{
+						return "";
+					}
+				}
+			}
+			return ext;
 		}
 
 		/// <summary>

@@ -9,7 +9,9 @@ costFontSize:95
 topRightFontSize:95
 bottomRightFontSize:95
 typeFontSize:90
+fontDecreaseGranularity:0.4
 lineSpacingFactor:1.0
+abilityPaddingLines:0.5
 spaceShrink:0.7
 italicCharacter:*
 escapeCharacter:\

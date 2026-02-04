@@ -9,7 +9,7 @@ namespace ToonVil_Card_Generator.CardGeneration
     public static class FontLoader
     {
         // Cache font collections so fonts remain valid for the app lifetime
-        private static readonly Dictionary<string, PrivateFontCollection> s_collections = new();
+        private static readonly Dictionary<string, PrivateFontCollection> s_collections = [];
 
         /// <summary>
         /// Loads an OTF/TTF from the project fonts folder and creates a Font.

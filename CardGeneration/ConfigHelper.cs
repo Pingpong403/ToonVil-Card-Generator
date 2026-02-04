@@ -69,7 +69,7 @@ namespace ToonVil_Card_Generator.CardGeneration
                 throw new FileNotFoundException($"Config file not found: {path}");
             }
 
-			Dictionary<string, string> pairs = new();
+			Dictionary<string, string> pairs = [];
 			string line;
 			try
 			{

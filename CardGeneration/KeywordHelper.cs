@@ -13,7 +13,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <exception cref="FileNotFoundException"></exception>
 		public static HashSet<string> GetKeywords()
 		{
-			HashSet<string> keywords = new();
+			HashSet<string> keywords = [];
 
 			foreach (string line in MiscHelper.GetTextFilesLines("Keywords"))
 			{
@@ -33,8 +33,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <returns>a dictionary containing every possible keyword and associated color</returns>
 		public static Dictionary<string, string> GetColorMapping()
 		{
-			Dictionary<string, string> baseKeywordColors = new();
-			Dictionary<string, string> keywordsAndColors = new();
+			Dictionary<string, string> baseKeywordColors = [];
+			Dictionary<string, string> keywordsAndColors = [];
 
 			// Populate dictionary to hold each singular keyword and its corresponding color
 			foreach (string line in MiscHelper.GetTextFilesLines("Colors"))

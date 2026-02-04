@@ -108,6 +108,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public static void DrawAbility(string ability, string activateAbility, string activateCost, string gainsAction, Font font, Color textColor, int maxWidth, int maxHeight, Dictionary<string, string> keywordsAndColors)
 		{
 			// Set up variables we'll potentially need
+			float granularity = float.Parse(ConfigHelper.GetConfigValue("text", "fontDecreaseGranularity"));
+			float paddingLines = float.Parse(ConfigHelper.GetConfigValue("text", "abilityPaddingLines"));
 			float dividingLineLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float actionSymbolLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
 			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
@@ -139,14 +141,14 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// We need this for symbol resizing
 			float originalLineHeight = drawing.MeasureString("Tq", font, maxWidth, sf).Height * lineSpacing;
 
-			// Naively find the maximum allowable font size
+			// Naively find the maximum allowable font size by measuring everything
 			float lineHeight;
 			float abilityHeight;
 			float activateAbilityHeight;
 			bool activateAbilityTextTaller = true;
 			float gainsActionHeight;
+			float paddingHeight;
 			float textHeight;
-			float granularity = 0.5F;
 			do
 			{
 				// Combine every given ability into one metric
@@ -176,7 +178,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 						gainsActionHeight += lineHeight;
 					}
 				}
-				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight;
+				int numPadding = (abilityHeight > 0 ? 1 : 0) + (activateAbilityHeight > 0 ? 1 : 0) + (gainsActionHeight > 0 ? 1 : 0) - 1;
+				if (numPadding < 0) numPadding = 0;
+				paddingHeight = numPadding * lineHeight * paddingLines;
+				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight;
 
 				if (textHeight > maxHeight) font = new Font(font.Name, font.SizeInPoints - granularity, font.Style);
 			} while (textHeight > maxHeight);
@@ -196,6 +201,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			{
 				words = GetCardWords(ability, textBrush, font, keywordsAndColors);
 				currentY = DrawWordByWord(words, drawing, sf, maxWidth, lineHeight, maxWidth / 2, currentY);
+				currentY += lineHeight * paddingLines;
 			}
 
 			// Then draw the activate symbol, cost, and ability
@@ -221,15 +227,24 @@ namespace ToonVil_Card_Generator.CardGeneration
 					// Cost, if any
 					if (activateCost != "")
 					{
-						words = GetCardWords(activateCost, textBrush, font, keywordsAndColors);
 						float xOffset = 250F;
 						float activateCostWidth = maxWidth / 2;
 						float activateCostHeight = MeasureWordByWord(GetCardWords(activateCost, textBrush, font, keywordsAndColors), drawing, sf, activateCostWidth, lineHeight);
 						float activateCostY = currentY + (3 * lineHeight - activateCostHeight) / 2; // maximum of 3 lines for clarity
-						DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, maxWidth / 2 + xOffset, activateCostY);
-						if (activateCost[0..4] == "Pay " && activateCost[^6..^0] == " Power")
+						if (activateCost[0..4] == "Pay " && (activateCost[^6..^0] == " Power" || activateCost[^7..^0] == " Power."))
 						{
-							DrawWordByWord(colon, drawing, sf, maxWidth, lineHeight, maxWidth / 2, currentY + lineHeight);
+							Font acFont = new Font(font, FontStyle.Bold);
+							float textLeftX = maxWidth / 2 + xOffset - drawing.MeasureString(activateCost, acFont, maxWidth, sf).Width / 2;
+							float symbolRightX = centerX + activateSymbol.Width * resizing / 2;
+							float colonX = (textLeftX + symbolRightX) / 2;
+							DrawWordByWord(colon, drawing, sf, maxWidth, lineHeight, colonX, currentY + lineHeight);
+							words = GetCardWords(activateCost, textBrush, acFont, keywordsAndColors);
+							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, maxWidth / 2 + xOffset, activateCostY);
+						}
+						else
+						{
+							words = GetCardWords(activateCost, textBrush, font, keywordsAndColors);
+							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, maxWidth / 2 + xOffset, activateCostY);
 						}
 					}
 					currentY += actionSymbolLines * lineHeight;
@@ -257,6 +272,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					DrawWordByWord(words, drawing, sf, sideAAMaxW, lineHeight, maxWidth - sideAAMaxW / 2 - 30, drawY);
 					currentY += activateAbilityHeight;
 				}
+				currentY += lineHeight * paddingLines;
 			}
 
 			// Finally, draw the gained action
@@ -284,8 +300,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 						ConfigHelper.GetConfigValue("text", "elementFont"),
 						float.Parse(ConfigHelper.GetConfigValue("text", "costFontSize")) * resizing
 					);
-					float textW = drawing.MeasureString(gainPowerAmt, gainPowerFont, 100000, sf).Width;
-					float textH = drawing.MeasureString(gainPowerAmt, gainPowerFont, 100000, sf).Height;
 					PointF gainPowerPos = new(
 						maxWidth / 2,
 						currentY + actionSymbolLines * lineHeight / 2
@@ -645,7 +659,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				else if (word.GetText() == "\n")
 				{
 					textHeight += lineHeight;
-					lineWidth = 0; // Completely ignore the text that was already built up
+					lineWidth = 0.001F; // Completely ignore the text that was already built up
 				}
 				// Generic case: add word's width (+ space), check if over
 				else
@@ -680,6 +694,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 			float dlLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float asLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
 			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
+			Color color = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
+			Brush brush = new SolidBrush(color);
 
 			// Draw text word by word
 			float currentY = startY;
@@ -703,8 +719,9 @@ namespace ToonVil_Card_Generator.CardGeneration
 						// Measure each word
 						currentWordWidth = words[iCheck].GetSizeF(g, maxW, sf).Width;
 
-						if (words[iCheck].GetText() == " ")
+						if (words[iCheck].GetText() == " " && lineLength > 0)
 						{
+							if (lineLength == 0) iDraw++;
 							space = true;
 							spaceWidth = words[iCheck].GetSizeF(g, maxW, sf).Width;
 							iCheck++;
@@ -756,10 +773,30 @@ namespace ToonVil_Card_Generator.CardGeneration
 				if (drawAsset)
 				{
 					string assetName = AssetHelper.GetAssetName(words[iDraw].GetText());
-					Image asset = Image.FromFile(PathHelper.GetFullPath(Path.Combine("assets", assetName + AssetHelper.FindExtension(assetName))));
-					float yOffset = string.Equals(assetName, "DividingLine") ? dlLines * lineH / 2 : asLines * lineH / 2;
+					string gainPowerAmt = AssetHelper.GainPowerAmount(assetName);
+					if (gainPowerAmt != "")
+					{
+						assetName = "GainPower";
+					}
+					string gainsSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", assetName + MiscHelper.FindExtension("assets", assetName)));
+					Image asset = Image.FromFile(gainsSymbolPath);
 					float resizing = string.Equals(assetName, "DividingLine") ? 1.0F : asLines * lineH / asset.Height;
+					float yOffset = string.Equals(assetName, "DividingLine") ? dlLines * lineH / 2 : asLines * lineH / 2;
 					DrawSymbol(asset, g, maxW / 2, currentY + yOffset, resizing);
+
+					// If this was a Gain Power action, draw the amount to be gained
+					if (gainPowerAmt != "")
+					{
+						Font gainPowerFont = FontLoader.GetFont(
+							ConfigHelper.GetConfigValue("text", "elementFont"),
+							float.Parse(ConfigHelper.GetConfigValue("text", "costFontSize")) * resizing
+						);
+						PointF gainPowerPos = new(
+							maxW / 2,
+							currentY + asLines * lineH / 2
+						);
+						g.DrawString(gainPowerAmt, gainPowerFont, brush, gainPowerPos, sf);
+					}
 					currentY += lineSpacing * lineH * (string.Equals(assetName, "DividingLine") ? dlLines : asLines);
 					iCheck++;
 					iDraw++;

@@ -20,9 +20,11 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("ToonVil Card Generator");
+
+        if (!MiscHelper.CheckStructure()) return;
         
         // Setup variables
-        Color textColor = ColorTranslator.FromHtml("#d7b06c");
+        Color textColor = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
         int titleAreaMaxWidth = SettingsHelper.GetSettingsValue("Card", "titleMaxWidth") == "" ?
             int.Parse(ConfigHelper.GetConfigValue("card", "textAreaMaxWidth")) :
             int.Parse(SettingsHelper.GetSettingsValue("Card", "titleMaxWidth"));
@@ -63,6 +65,9 @@ class Program
             CleanIntermediaries();
 
             repeat = false;
+
+            // Do an initial check for all necessary files/directories
+
 
             // Load all the keywords and their colors
             Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();

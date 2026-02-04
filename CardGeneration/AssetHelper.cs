@@ -27,35 +27,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 				assetName = "GainPower";
 			}
 			string pathNoExt = Path.Combine("assets", assetName);
-			string relativePath = pathNoExt + FindExtension(assetName);
+			string relativePath = pathNoExt + MiscHelper.FindExtension("assets", assetName);
 			return File.Exists(PathHelper.GetFullPath(relativePath));
-		}
-
-		/// <summary>
-		/// Returns the extension belonging to this asset name.
-		/// </summary>
-		/// <param name="assetName">asset name to find the extension of</param>
-		/// <returns>the extension, whether .png, .jpg, or .jpeg, of the asset found, or ""</returns>
-		public static string FindExtension(string assetName)
-		{
-			string pathNoExt = Path.Combine("assets", assetName);
-			string ext = ".png";
-			string relativePath = pathNoExt + ext;
-			if (!File.Exists(PathHelper.GetFullPath(relativePath)))
-			{
-				ext = ".jpg";
-				relativePath = pathNoExt + ext;
-				if (!File.Exists(PathHelper.GetFullPath(relativePath)))
-				{
-					ext = ".jpeg";
-					relativePath = pathNoExt + ext;
-					if (!File.Exists(PathHelper.GetFullPath(relativePath)))
-					{
-						return "";
-					}
-				}
-			}
-			return ext;
 		}
 
 		/// <summary>
