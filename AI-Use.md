@@ -4,6 +4,7 @@ I plan to use AI to help me build this project. AI will not be making any design
 
 Here is a list documenting every time I have asked AI a question and how it impacted the final product:
 
+## v1.x
 - starting a .NET project
 - using System.Drawing to generate a PNG
 - using Path to build a proper filepath for intermediary text images

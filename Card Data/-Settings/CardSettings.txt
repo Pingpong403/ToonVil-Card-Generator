@@ -5,5 +5,9 @@
 # If a setting is left blank, then the default value will be used
 
 # The maximum width the Title can take. Shrink for larger ornaments.
-# Accepts: any number within 750-1300. Default: 1230
+# Accepts: any number within 750-1230. Default: 1230
 titleMaxWidth:
+
+# The maximum width the Type can take. Enlarge for longer type names/combinations.
+# Accepts: any number within 200-650. Default: 428
+typeMaxWidth:
