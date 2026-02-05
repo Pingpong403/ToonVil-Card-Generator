@@ -18,6 +18,6 @@ Ensure you have Git installed on your system. [Here](https://git-scm.com/install
 4) Run `generator.exe` to assemble the cards. They will be found in -Exports
 
 ## Disclaimer
-I did not create, nor was I involved in the development of, any official Villainous titles. I am not affiliated with Ravensburger (RA) in any way. I am not receiving financial compensation from RA or any other third party.
+I did not create, nor was I involved in the development of, any official Villainous titles. I am not affiliated with Ravensburger North America (RA) in any way. I am not receiving financial compensation from RA or any other third party.
 
 I did not create the Animation Villainous (ToonVil) system.
