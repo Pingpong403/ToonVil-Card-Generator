@@ -21,7 +21,11 @@ class Program
     {
         Console.WriteLine("ToonVil Card Generator");
 
-        if (!MiscHelper.CheckStructure()) return;
+        if (!MiscHelper.CheckStructure())
+        {
+            var test = Console.ReadLine();
+            return;
+        }
         
         // Setup variables
         Color textColor = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));

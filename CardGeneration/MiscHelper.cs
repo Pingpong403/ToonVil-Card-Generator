@@ -15,15 +15,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 		{
 			// 1, 2, 4, 8, 16, 32 - higher number, more extreme
 			int infractions = 0;
-			if (!Directory.Exists(PathHelper.GetFullPath("config"))) infractions += 32;
-			if (!Directory.Exists(PathHelper.GetFullPath("assets"))) infractions += 16;
-			if (!Directory.Exists(PathHelper.GetFullPath("fonts"))) infractions += 8;
-			if (!Directory.Exists(PathHelper.GetFullPath("Card Data"))) infractions += 7;
+			if (!Directory.Exists(PathHelper.GetFullPath("config\\"))) infractions += 32;
+			if (!Directory.Exists(PathHelper.GetFullPath("assets\\"))) infractions += 16;
+			if (!Directory.Exists(PathHelper.GetFullPath("fonts\\"))) infractions += 8;
+			if (!Directory.Exists(PathHelper.GetFullPath("Card Data\\"))) infractions += 7;
 			else
 			{
-				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-TextFiles")))) infractions += 4;
-				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-Layout")))) infractions += 2;
-				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-Images")))) infractions += 1;
+				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-TextFiles\\")))) infractions += 4;
+				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-Layout\\")))) infractions += 2;
+				if (!Directory.Exists(PathHelper.GetFullPath(Path.Combine("Card Data", "-Images\\")))) infractions += 1;
 			}
 			switch (infractions)
 			{
