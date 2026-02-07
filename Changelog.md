@@ -32,3 +32,12 @@
 - included new typeMaxWidth setting
 - min/max settings are now configurable (does nothing at the moment)
 - slight tutorial improvement
+
+## v2.2
+- added padding at the bottom of text to eliminate cutoff
+- distance between Activate symbol and Activate cost is the same no matter the font size
+- Activate symbol and cost are equidistant to colon; this spacing and the colon's position are now configurable
+- line spacing is smaller now
+- shrank the space the dividing line takes up
+- when the Activate Ability goes to the side, its max width is now slightly smaller; x-position is now configurable
+- Ability y-position and height are more easily configurable

@@ -129,8 +129,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// Ability
 			using (Image abilityImg = Image.FromFile(abilityPath))
 			{
-				Point abilityCenter = MiscHelper.GetElementPos("ability");
-				g.DrawImage(abilityImg, abilityCenter.X - abilityImg.Width / 2, abilityCenter.Y - abilityImg.Height / 2);
+				int abilityCenterX = int.Parse(ConfigHelper.GetConfigValue("layout", "abilityCenterX"));
+				int abilityTopY = int.Parse(ConfigHelper.GetConfigValue("layout", "abilityTopY"));
+				int abilityBottomPadding = int.Parse(ConfigHelper.GetConfigValue("card", "abilityBottomPadding"));
+				g.DrawImage(abilityImg, abilityCenterX - abilityImg.Width / 2, abilityTopY);
 			}
 
 			// Type

@@ -113,7 +113,9 @@ namespace ToonVil_Card_Generator.CardGeneration
 			float dividingLineLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float actionSymbolLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
 			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
+			int abilityBottomPadding = int.Parse(ConfigHelper.GetConfigValue("card", "abilityBottomPadding"));
 			int sideAAMaxW = int.Parse(ConfigHelper.GetConfigValue("card", "sideActivateAbilityMaxWidth"));
+			int sideAACenterX = int.Parse(ConfigHelper.GetConfigValue("card", "sideActivateAbilityCenterX"));
 
 			// Set the stringformat flags for center alignment and no trimming
 			StringFormat sf = StringFormat.GenericTypographic;
@@ -122,7 +124,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			sf.LineAlignment = StringAlignment.Center;
 
 			// Create a new image of the maximum size for our graphics
-			Image img = new Bitmap(maxWidth, maxHeight);
+			Image img = new Bitmap(maxWidth, maxHeight + abilityBottomPadding);
 			Graphics drawing = Graphics.FromImage(img);
 
 			// Use high quality everything
@@ -181,15 +183,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 				int numPadding = (abilityHeight > 0 ? 1 : 0) + (activateAbilityHeight > 0 ? 1 : 0) + (gainsActionHeight > 0 ? 1 : 0) - 1;
 				if (numPadding < 0) numPadding = 0;
 				paddingHeight = numPadding * lineHeight * paddingLines;
-				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight;
+				textHeight = (abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight) * lineSpacing;
 
-				if (textHeight > maxHeight) font = new Font(font.Name, font.SizeInPoints - granularity, font.Style);
+				if (textHeight > maxHeight - (activateAbility != "" && ability == "" ? textHeight * 0.25 : 0)) font = new Font(font.Name, font.SizeInPoints - granularity, font.Style);
 			} while (textHeight > maxHeight);
 
 			List<CardWord> colon = GetCardWords(":", textBrush, font, keywordsAndColors);
 			List<CardWord> locationGainsText = GetCardWords("\\This \\location \\gains\\:", textBrush, font, keywordsAndColors);
 
-			// For resizing symbols
+			// For resizing symbols with more complexity
 			float lineHeightRatio = lineHeight / originalLineHeight;
 
 			// Drawing variables
@@ -211,40 +213,43 @@ namespace ToonVil_Card_Generator.CardGeneration
 				string activateSymbolPath = PathHelper.GetFullPath(Path.Combine("assets", "Activate.png"));
 				Image activateSymbol = Image.FromFile(activateSymbolPath);
 				float resizing = actionSymbolLines * lineHeight / activateSymbol.Height;
-				float centerX = maxWidth / 2;
+				float symbolCenterX = maxWidth / 2;
 				if (ability == "" || activateCost != "") // If there is no ability or there is an activate cost, draw normally
 				{
+					int colonCenterX = int.Parse(ConfigHelper.GetConfigValue("card", "colonCenterX"));
+					int colonPadding = int.Parse(ConfigHelper.GetConfigValue("card", "colonPadding"));
+					bool drawColon = activateCost != "" && activateCost[0..4] == "Pay " && (activateCost[^6..^0] == " Power" || activateCost[^7..^0] == " Power.");
+					float symbolW = activateSymbol.Width * resizing;
 					if (activateCost != "")
 					{
-						centerX -= 250 * lineHeightRatio;
+						symbolCenterX = colonCenterX - colonPadding - symbolW / 2;
 					}
 					if (ability == "" && activateAbility != "")
 					{
-						currentY = lineHeight * lineHeightRatio * 0.25F;
+						currentY = lineHeight * 0.25F;
 					}
-					DrawSymbol(activateSymbol, drawing, centerX, currentY + (lineHeight - 3) * actionSymbolLines / 2, resizing);
+					DrawSymbol(activateSymbol, drawing, symbolCenterX, currentY + actionSymbolLines * lineHeight / 2, resizing);
 					
 					// Cost, if any
 					if (activateCost != "")
 					{
-						float xOffset = 250F;
+						float costLeftX = colonCenterX + colonPadding;
 						float activateCostWidth = maxWidth / 2;
 						float activateCostHeight = MeasureWordByWord(GetCardWords(activateCost, textBrush, font, keywordsAndColors), drawing, sf, activateCostWidth, lineHeight);
 						float activateCostY = currentY + (3 * lineHeight - activateCostHeight) / 2; // maximum of 3 lines for clarity
-						if (activateCost[0..4] == "Pay " && (activateCost[^6..^0] == " Power" || activateCost[^7..^0] == " Power."))
+						if (drawColon)
 						{
 							Font acFont = new Font(font, FontStyle.Bold);
-							float textLeftX = maxWidth / 2 + xOffset - drawing.MeasureString(activateCost, acFont, maxWidth, sf).Width / 2;
-							float symbolRightX = centerX + activateSymbol.Width * resizing / 2;
-							float colonX = (textLeftX + symbolRightX) / 2;
-							DrawWordByWord(colon, drawing, sf, maxWidth, lineHeight, colonX, currentY + lineHeight);
+							float costCenterX = costLeftX + drawing.MeasureString(activateCost, acFont, maxWidth, sf).Width / 2;
+							DrawWordByWord(colon, drawing, sf, maxWidth, lineHeight, colonCenterX, currentY + lineHeight);
 							words = GetCardWords(activateCost, textBrush, acFont, keywordsAndColors);
-							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, maxWidth / 2 + xOffset, activateCostY);
+							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, costCenterX, activateCostY);
 						}
 						else
 						{
+							float costCenterX = costLeftX + drawing.MeasureString(activateCost, font, maxWidth, sf).Width / 2;
 							words = GetCardWords(activateCost, textBrush, font, keywordsAndColors);
-							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, maxWidth / 2 + xOffset, activateCostY);
+							DrawWordByWord(words, drawing, sf, activateCostWidth, lineHeight, maxWidth / 2 + costCenterX, activateCostY);
 						}
 					}
 					currentY += actionSymbolLines * lineHeight;
@@ -259,8 +264,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 				else // Otherwise, the activate ability is to the right of the symbol
 				{
 					// Symbol
-					centerX = maxWidth - sideAAMaxW - 110 * lineHeightRatio - activateSymbol.Width / 2;
-					DrawSymbol(activateSymbol, drawing, centerX, currentY + activateAbilityHeight / 2, resizing);
+					symbolCenterX = sideAACenterX - sideAAMaxW / 2 - 100 - activateSymbol.Width * resizing / 2;
+					DrawSymbol(activateSymbol, drawing, symbolCenterX, currentY + activateAbilityHeight / 2, resizing);
 					
 					// Activate ability
 					words = GetCardWords(activateAbility, textBrush, font, keywordsAndColors);
