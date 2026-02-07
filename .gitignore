@@ -53,9 +53,5 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-# Because souce code isn't important to (most) Villainous fans
-*.csproj
-*.sln
-
 # For my eyes only
 TODO.md
