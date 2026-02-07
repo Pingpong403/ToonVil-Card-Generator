@@ -183,7 +183,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				int numPadding = (abilityHeight > 0 ? 1 : 0) + (activateAbilityHeight > 0 ? 1 : 0) + (gainsActionHeight > 0 ? 1 : 0) - 1;
 				if (numPadding < 0) numPadding = 0;
 				paddingHeight = numPadding * lineHeight * paddingLines;
-				textHeight = (abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight) * lineSpacing;
+				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight;
 
 				if (textHeight > maxHeight - (activateAbility != "" && ability == "" ? textHeight * 0.25 : 0)) font = new Font(font.Name, font.SizeInPoints - granularity, font.Style);
 			} while (textHeight > maxHeight);

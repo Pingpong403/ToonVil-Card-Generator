@@ -41,3 +41,7 @@
 - shrank the space the dividing line takes up
 - when the Activate Ability goes to the side, its max width is now slightly smaller; x-position is now configurable
 - Ability y-position and height are more easily configurable
+
+### v2.2.1
+- fixed bug causing some Abilities to be cut off
+- cleaned up some obselete code

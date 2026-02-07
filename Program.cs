@@ -6,15 +6,6 @@ using System.Reflection;
 
 namespace ToonVil_Card_Generator;
 
-public enum CardType
-{
-    Ability,
-    Activate,
-    ActivateCost,
-    AbilityActivate,
-    AbilityActivateCost
-}
-
 class Program
 {
     static void Main(string[] args)
@@ -69,9 +60,6 @@ class Program
             CleanIntermediaries();
 
             repeat = false;
-
-            // Do an initial check for all necessary files/directories
-
 
             // Load all the keywords and their colors
             Dictionary<string, string> keywordsAndColors = KeywordHelper.GetColorMapping();
