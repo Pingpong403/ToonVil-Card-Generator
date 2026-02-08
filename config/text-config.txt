@@ -3,7 +3,8 @@ abilityFont:cartoonToyTurbo.otf
 elementFont:candyBeans.otf
 typeFont:candyBeans.otf
 titleFontSize:110
-abilityFontSize:80
+abilityFontSize:85
+abilityMinFontSize:60
 strengthFontSize:110
 costFontSize:95
 topRightFontSize:95

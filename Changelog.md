@@ -45,3 +45,9 @@
 ### v2.2.1
 - fixed bug causing some Abilities to be cut off
 - cleaned up some obselete code
+
+### v2.2.2
+- increased maximum font size to 85px
+- implemented a minimum font size; the generator will notify the user if a card's Ability text goes below it
+- fixed a discrepancy between Points and Pixels
+- added an image for the initial Tutorial card
