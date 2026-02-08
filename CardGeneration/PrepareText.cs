@@ -698,7 +698,6 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// Set up variables we'll potentially need
 			float dlLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float asLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
-			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
 			Color color = ColorTranslator.FromHtml("#" + ConfigHelper.GetConfigValue("color", "fontColor"));
 			Brush brush = new SolidBrush(color);
 
@@ -773,7 +772,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					iDraw++;
 				}
 				// Move the register down
-				currentY += lineH * lineSpacing;
+				currentY += lineH;
 				// Draw the asset that is up to draw
 				if (drawAsset)
 				{
@@ -802,7 +801,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 						);
 						g.DrawString(gainPowerAmt, gainPowerFont, brush, gainPowerPos, sf);
 					}
-					currentY += lineSpacing * lineH * (string.Equals(assetName, "DividingLine") ? dlLines : asLines);
+					currentY += lineH * (string.Equals(assetName, "DividingLine") ? dlLines : asLines);
 					iCheck++;
 					iDraw++;
 					drawAsset = false;
