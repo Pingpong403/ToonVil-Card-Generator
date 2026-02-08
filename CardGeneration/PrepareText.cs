@@ -110,6 +110,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			// Set up variables we'll potentially need
 			float granularity = float.Parse(ConfigHelper.GetConfigValue("text", "fontDecreaseGranularity"));
 			float paddingLines = float.Parse(ConfigHelper.GetConfigValue("text", "abilityPaddingLines"));
+			float minFontSize = float.Parse(ConfigHelper.GetConfigValue("text", "abilityMinFontSize"));
 			float dividingLineLines = float.Parse(ConfigHelper.GetConfigValue("asset", "dividingLineLines"));
 			float actionSymbolLines = float.Parse(ConfigHelper.GetConfigValue("asset", "actionSymbolLines"));
 			float lineSpacing = float.Parse(ConfigHelper.GetConfigValue("text", "lineSpacingFactor"));
@@ -185,8 +186,14 @@ namespace ToonVil_Card_Generator.CardGeneration
 				paddingHeight = numPadding * lineHeight * paddingLines;
 				textHeight = abilityHeight + activateAbilityHeight + gainsActionHeight + paddingHeight;
 
-				if (textHeight > maxHeight - (activateAbility != "" && ability == "" ? textHeight * 0.25 : 0)) font = new Font(font.Name, font.SizeInPoints - granularity, font.Style);
+				if (textHeight > maxHeight - (activateAbility != "" && ability == "" ? textHeight * 0.25 : 0)) font = new Font(font.Name, font.Size - granularity, font.Style, font.Unit);
 			} while (textHeight > maxHeight);
+
+			// Check if font size went below minimum and notify the user
+			if (font.Size < minFontSize)
+			{
+				Console.WriteLine($"THE FOLLOWING CARD'S ABILITY TEXT WENT BELOW THE MIMUMUM {minFontSize}px:");
+			}
 
 			List<CardWord> colon = GetCardWords(":", textBrush, font, keywordsAndColors);
 			List<CardWord> locationGainsText = GetCardWords("\\This \\location \\gains\\:", textBrush, font, keywordsAndColors);
