@@ -25,6 +25,13 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <param name="maxHeight">maximum height the title is allowed to take up</param>
 		public static void DrawTitle(string text, Font font, Color textColor, int maxWidth, int maxHeight)
 		{
+			// Remove duplicate designation
+			if (text[^1] == ')' && text[^3] == '(')
+			{
+				if (text[^4] == ' ') text = text[0..^4];
+				else text = text[0..^3];
+			}
+
 			// For titles, capitalize the text
 			text = text.ToUpper();
 
