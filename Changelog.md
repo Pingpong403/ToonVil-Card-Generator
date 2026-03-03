@@ -51,3 +51,9 @@
 - implemented a minimum font size; the generator will notify the user if a card's Ability text goes below it
 - fixed a discrepancy between Points and Pixels
 - added an image for the initial Tutorial card
+
+# v3.0 Merged with central generator
+- massive improvements to text drawing
+- multiple powerful settings introduced
+- increased line break utility
+- more feedback in general
