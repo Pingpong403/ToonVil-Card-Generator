@@ -54,7 +54,7 @@ namespace ToonVil_Card_Generator
 		/// <returns>the path to the given file or directory from the computer's root</returns>
 		public static string GetFullPath(string relativePath)
 		{
-			var baseDir = AppContext.BaseDirectory;
+			var baseDir = AppDomain.CurrentDomain.BaseDirectory;
 			var fullPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", relativePath));
 			if (!Directory.Exists(Path.GetDirectoryName(fullPath)) && !File.Exists(fullPath))
 			{

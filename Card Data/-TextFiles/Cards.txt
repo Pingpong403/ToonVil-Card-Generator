@@ -8,10 +8,10 @@
 # Fate Deck
 
 
-# Villain deck
+# Villain Deck
 
 
-# Showcase decks
+# Showcase Decks
 #Tutorial			Welcome to the ToonVil Card Generator! % I hope you enjoy using it and discovering all its % features. DividingLine_ Dear User: I see you've found the tutorial section. Congrats! You know how to poke around and figure stuff out. I hope these cards show just how powerful the generator is, and give you an idea of how to use it! %% Go find ToonVil-Card-Generator.exe and run it to get the rest of the tutorial!			Tip			Tutorial	
 1 Tutorial			Welcome to the ToonVil Card Generator! % I hope you enjoy using it and discovering all its features. DividingLine_ Dear User: I see you've found the tutorial section. Congrats! You know how to poke around and figure stuff out. I hope these cards show just how powerful the generator is, and give you an idea of how to use it!			Tip			Tutorial	
 2 TextFiles			This card is second. Read Tutorial before you read % me! DividingLine_ Dear User: -TextFiles is where you will put all of your cards' text data! Cards.txt holds all your cards as entries. Each entry has different elements, each separated with a TAB. Keywords.txt is where you will put each keyword (plus any variations), including the Villain name! Colors.txt is where you will specify what color each keyword should be.			Tip			TextFiles	

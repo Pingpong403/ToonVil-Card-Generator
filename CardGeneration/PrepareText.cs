@@ -231,12 +231,12 @@ namespace ToonVil_Card_Generator.CardGeneration
 						float costLeftX = colonCenterX + colonPadding;
 						float activateCostWidth = maxWidth / 2;
 						float activateCostHeight = MeasureWordByWord(GetCardWords(activateCost, textColor, font, keywordsAndColors), tf, activateCostWidth, lineHeight, lineSpacing).Height;
-						float activateCostY = currentY + (2 * lineHeight - activateCostHeight) / 2; // maximum of 3 lines for clarity
+						float activateCostY = currentY + (actionSymbolLines * lineHeight - activateCostHeight) / 2; // maximum of 3 lines for clarity
 						if (drawColon)
 						{
 							Font acFont = new Font(font, FontStyle.Bold);
 							float costCenterX = costLeftX + TextRenderer.MeasureText(activateCost, acFont, new Size(1000, 1000), tf).Width / 2;
-							DrawWordByWord(colon, g, tf, maxWidth, lineHeight, colonCenterX, currentY + lineHeight / 2, lineSpacing);
+							DrawWordByWord(colon, g, tf, maxWidth, lineHeight, colonCenterX, activateCostY, lineSpacing);
 							words = GetCardWords(activateCost, textColor, acFont, keywordsAndColors);
 							DrawWordByWord(words, g, tf, activateCostWidth, lineHeight, costCenterX, activateCostY, lineSpacing);
 						}

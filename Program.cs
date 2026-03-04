@@ -60,7 +60,12 @@ class Program
             // If the user has indicated, get all the cards we need to re-generate
             bool trackChanges = ValueFetching.GetSettingsValue("Data", "trackChanges") == "true";
             List<string> cardsToSkip = [];
-            if (trackChanges) cardsToSkip = Logging.GetCardsToSkip();
+            if (trackChanges)
+            {
+                cardsToSkip = Logging.GetCardsToSkip();
+                // Record the current state of the data
+                Logging.LogThisVersion();
+            }
             else File.Delete(Structuring.GetFullPath(Path.Combine("logs", "all-data.json")));
 
             // Initial cleanup
@@ -120,9 +125,6 @@ class Program
 
             // Final cleanup
             CleanIntermediaries();
-
-            // Record the current state of the data
-            if (trackChanges) Logging.LogThisVersion();
 
             Console.WriteLine("Card generation done. Press ENTER to repeat, close this window to exit.");
             string? input = Console.ReadLine();
