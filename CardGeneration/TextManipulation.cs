@@ -44,7 +44,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 					alreadyAddedSpace = false;
 				}
 			}
-
+			while (IsPunctuation(char.ToString(cleanTitle[^1])))
+			{
+				cleanTitle = cleanTitle[0..^1];
+			}
 			return cleanTitle;
 		}
 

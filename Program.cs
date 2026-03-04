@@ -94,7 +94,7 @@ class Program
                     string deck = cardSplit[9];
                     string gainsAction = cardSplit[10];
 
-                    bool skipCard = trackChanges && cardsToSkip.Contains(cardSplit[0]);
+                    bool skipCard = trackChanges && cardsToSkip.Contains(TextManipulation.CleanTitle(title));
                     // Skip cards that do not have all the necessary elements
                     if (!skipCard && title != "" && (ability != "" || activateAbility != "" || activateCost != "" || gainsAction != "") && type != "")
                     {
@@ -105,13 +105,9 @@ class Program
                         if (strength != "") DrawCornerElement(strength, strengthFont, textColor, "Strength", cornerElementMaxWidth, cornerElementMaxHeight);
                         if (topRight != "") DrawCornerElement(topRight, topRightFont, textColor, "TopRight", cornerElementMaxWidth, cornerElementMaxHeight);
                         if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, textColor, "BottomRight", cornerElementMaxWidth, cornerElementMaxHeight);
-
-                        while (TextManipulation.IsPunctuation(char.ToString(title[^1])))
-                        {
-                            title = title[0..^1];
-                        }
-                        SizeCardImage(title);
-                        CombineImages(title, deck);
+                        
+                        SizeCardImage(TextManipulation.CleanTitle(title));
+                        CombineImages(TextManipulation.CleanTitle(title), deck);
                         CleanIntermediaries();
                     }
                     else if (title == "" ||

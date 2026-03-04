@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -42,13 +43,12 @@ namespace ToonVil_Card_Generator.CardGeneration
 			{
 				Console.WriteLine("Exception: " + e.Message);
 			}
-			line = "";
 
 			try
 			{
 				bool getAllCards = false;
 				ProjectData? deserialized = JsonSerializer.Deserialize<ProjectData>(allData);
-
+				if (deserialized is null) return [];
 				foreach (var settingCategory in deserialized.Settings)
 				{
 					foreach (var setting in settingCategory.Value)
@@ -78,7 +78,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 					string[] cardSplit = card.Split("\t");
 					if (cardSplit.Length == 11)
 					{
-						cards[cardSplit[0]] = new(
+						cards[TextManipulation.CleanTitle(cardSplit[0])] = new(
+							cardSplit[0], // title
 							cardSplit[1], // cost
 							cardSplit[2], // strength
 							$"{cardSplit[3]}@{cardSplit[4]}@{cardSplit[5]}@{cardSplit[10]}", // ability@activate ability@active cost@gains action
@@ -88,13 +89,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 							cardSplit[9]  // deck
 						)
 						{
-							hasImage = Structuring.ImageExists(cardSplit[0]) ? "true" : "false"
+							hasImage = Structuring.ImageExists(TextManipulation.CleanTitle(cardSplit[0])) ? "true" : "false"
 						};
 					}
 				}
 
+				HashSet<string> cardsInLog = [];
 				foreach (var card in deserialized.Cards)
 				{
+					cardsInLog.Add(card.Key);
 					bool includeCard = false;
 					string exportsPath = Structuring.GetFullPath(Path.Combine("Card Data", "-Exports"));
 					string cardPath = Path.Combine(exportsPath, card.Key + Structuring.FindExtension(exportsPath, card.Key));
@@ -107,6 +110,10 @@ namespace ToonVil_Card_Generator.CardGeneration
 							{
 								switch (field.Key)
 								{
+									case "Title":
+										if (cards.TryGetValue(card.Key, out var val0))
+											if (val0.Title != field.Value) includeCard = true;
+										break;
 									case "Cost":
 										if (cards.TryGetValue(card.Key, out var val1))
 											if (val1.Cost != field.Value) includeCard = true;
@@ -151,7 +158,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 				List<string> cardsToSkip = [];
 				foreach (var card in cards)
 				{
-					cardsToSkip.Add(card.Key);
+					// If the card is not in the log, then we do not skip it
+					if (cardsInLog.Contains(card.Key)) cardsToSkip.Add(card.Key);
 				}
 				return cardsToSkip;
 			}
@@ -254,6 +262,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 				if (cardData.Length == 11)
 				{
 					Card cardObject = new(
+						cardData[0], // title
 						cardData[1], // cost
 						cardData[2], // strength
 						$"{cardData[3]}@{cardData[4]}@{cardData[5]}@{cardData[10]}", // ability@activate ability@active cost@gains action
@@ -261,10 +270,12 @@ namespace ToonVil_Card_Generator.CardGeneration
 						cardData[7], // top right
 						cardData[8], // bottom right
 						cardData[9]  // deck
-					);
-					cardObject.hasImage = Structuring.ImageExists(cardData[0]) ? "true" : "false";
+					)
+					{
+						hasImage = Structuring.ImageExists(TextManipulation.CleanTitle(cardData[0])) ? "true" : "false"
+					};
 
-					allCardData += $"\"{cardData[0]}\": {JsonSerializer.Serialize(cardObject)},";
+					allCardData += $"\"{TextManipulation.CleanTitle(cardData[0])}\": {JsonSerializer.Serialize(cardObject)},";
 				}
 			}
 			if (allCardData == "") return "";
@@ -280,8 +291,9 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public Dictionary<string, Dictionary<string, string>> Cards { get; set; }
 	}
 
-	class Card(string cost, string strength, string ability, string type, string topRight, string bottomRight, string deck)
+	class Card(string title, string cost, string strength, string ability, string type, string topRight, string bottomRight, string deck)
 	{
+		public string Title { get; } = title;
 		public string Cost { get; } = cost;
 		public string Strength { get; } = strength;
 		public string Ability { get; } = ability;
@@ -289,6 +301,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		public string TopRight { get; } = topRight;
 		public string BottomRight { get; } = bottomRight;
 		public string Deck { get; } = deck;
+		[JsonInclude]
 		public string hasImage = "false";
 	}
 }
