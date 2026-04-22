@@ -20,6 +20,7 @@ class Program
         
         // Setup variables
         Color textColor = ColorTranslator.FromHtml("#" + ValueFetching.GetConfigValue("color", "fontColor"));
+        Color fateTextColor = ColorTranslator.FromHtml("#" + ValueFetching.GetConfigValue("color", "fateFontColor"));
         int titleAreaMaxWidth = ValueFetching.GetSettingsValue("Card", "titleMaxWidth") == "" ?
             int.Parse(ValueFetching.GetConfigValue("card", "textAreaMaxWidth")) :
             int.Parse(ValueFetching.GetSettingsValue("Card", "titleMaxWidth"));
@@ -103,13 +104,14 @@ class Program
                     // Skip cards that do not have all the necessary elements
                     if (!skipCard && title != "" && (ability != "" || activateAbility != "" || activateCost != "" || gainsAction != "") && type != "")
                     {
-                        DrawTitle(title, titleFont, textColor, titleAreaMaxWidth, titleAreaMaxHeight);
-                        DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, textColor, abilityAreaMaxWidth, abilityAreaMaxHeight, keywordsAndColors);
-                        DrawType(type, typeFont, textColor, typeAreaMaxWidth, typeAreaMaxHeight, keywordsAndColors);
-                        if (cost != "") DrawCornerElement(cost, costFont, textColor, "Cost", cornerElementMaxWidth, cornerElementMaxHeight);
-                        if (strength != "") DrawCornerElement(strength, strengthFont, textColor, "Strength", cornerElementMaxWidth, cornerElementMaxHeight);
-                        if (topRight != "") DrawCornerElement(topRight, topRightFont, textColor, "TopRight", cornerElementMaxWidth, cornerElementMaxHeight);
-                        if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, textColor, "BottomRight", cornerElementMaxWidth, cornerElementMaxHeight);
+                        Color fontColor = deck == "Fate" ? fateTextColor : textColor;
+                        DrawTitle(title, titleFont, fontColor, titleAreaMaxWidth, titleAreaMaxHeight);
+                        DrawAbility(ability, activateAbility, activateCost, gainsAction, abilityFont, fontColor, abilityAreaMaxWidth, abilityAreaMaxHeight, keywordsAndColors);
+                        DrawType(type, typeFont, fontColor, typeAreaMaxWidth, typeAreaMaxHeight, keywordsAndColors);
+                        if (cost != "") DrawCornerElement(cost, costFont, fontColor, "Cost", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (strength != "") DrawCornerElement(strength, strengthFont, fontColor, "Strength", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (topRight != "") DrawCornerElement(topRight, topRightFont, fontColor, "TopRight", cornerElementMaxWidth, cornerElementMaxHeight);
+                        if (bottomRight != "") DrawCornerElement(bottomRight, bottomRightFont, fontColor, "BottomRight", cornerElementMaxWidth, cornerElementMaxHeight);
                         
                         SizeCardImage(TextManipulation.CleanTitle(title));
                         CombineImages(TextManipulation.CleanTitle(title), deck);

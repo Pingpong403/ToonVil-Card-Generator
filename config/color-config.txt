@@ -4,4 +4,5 @@ effectColor:19ff23
 plotColor:d3568d
 heroColor:eda64b
 fontColor:d7b06c
+fateFontColor:000000
 ornamentColor:d7b06c

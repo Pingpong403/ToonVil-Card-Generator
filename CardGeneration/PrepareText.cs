@@ -624,7 +624,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 						textG.PixelOffsetMode = PixelOffsetMode.HighQuality;
 						textG.SmoothingMode = SmoothingMode.HighQuality;
 						textG.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-						Color bgColor = Color.Black;
+						Color bgColor = Color.Chartreuse;
 						textG.Clear(bgColor);
 						TextRenderer.DrawText(textG, word.GetText(), word.GetTextFont(), new Rectangle(0, (int)((lineHeight - wordHeight) * lineSpacing / 2), (int)wordWidth + horizontalPadding, (int)wordHeight), word.GetTextColor(), bgColor, tf);
 						ImageManipulation.Mask(textB, word.GetTextColor(), bgColor);

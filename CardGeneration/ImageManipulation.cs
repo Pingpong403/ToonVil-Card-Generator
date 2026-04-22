@@ -27,6 +27,8 @@ namespace ToonVil_Card_Generator.CardGeneration
 							 		 (b.GetPixel(x, y).G - backgroundColor.G) * (b.GetPixel(x, y).G - backgroundColor.G) + 
 							 		 (b.GetPixel(x, y).B - backgroundColor.B) * (b.GetPixel(x, y).B - backgroundColor.B));
 					int newA = (int)(currentDistance / totalDistance * 255);
+					if (newA > 255) newA = 255;
+					else if (newA < 0) newA = 0;
 					b.SetPixel(x, y, Color.FromArgb(newA, correctColor));
 				}
 			}
