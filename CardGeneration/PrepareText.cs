@@ -78,7 +78,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			float startY = (maxHeight - textSize.Height) / 2;
 
 			// Draw title word by word
-			DrawWordByWord(words, g, tf, maxWidth, lineHeight, maxWidth / 2, startY, lineSpacingFactor);
+			DrawWordByWord(words, g, tf, textColor, maxWidth, lineHeight, maxWidth / 2, startY, lineSpacingFactor);
 
 			g.Save();
 			g.Dispose();
@@ -195,7 +195,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			if (ability != "")
 			{
 				words = GetCardWords(ability, textColor, font, keywordsAndColors);
-				currentY = DrawWordByWord(words, g, tf, maxWidth, lineHeight, maxWidth / 2, currentY, lineSpacing);
+				currentY = DrawWordByWord(words, g, tf, textColor, maxWidth, lineHeight, maxWidth / 2, currentY, lineSpacing);
 				currentY += lineHeight * paddingLines;
 			}
 
@@ -236,15 +236,15 @@ namespace ToonVil_Card_Generator.CardGeneration
 						{
 							Font acFont = new Font(font, FontStyle.Bold);
 							float costCenterX = costLeftX + TextRenderer.MeasureText(activateCost, acFont, new Size(1000, 1000), tf).Width / 2;
-							DrawWordByWord(colon, g, tf, maxWidth, lineHeight, colonCenterX, activateCostY, lineSpacing);
+							DrawWordByWord(colon, g, tf, textColor, maxWidth, lineHeight, colonCenterX, activateCostY, lineSpacing);
 							words = GetCardWords(activateCost, textColor, acFont, keywordsAndColors);
-							DrawWordByWord(words, g, tf, activateCostWidth, lineHeight, costCenterX, activateCostY, lineSpacing);
+							DrawWordByWord(words, g, tf, textColor, activateCostWidth, lineHeight, costCenterX, activateCostY, lineSpacing);
 						}
 						else
 						{
 							float costCenterX = costLeftX + TextRenderer.MeasureText(activateCost, font, new Size(1000, 1000), tf).Width / 2;
 							words = GetCardWords(activateCost, textColor, font, keywordsAndColors);
-							DrawWordByWord(words, g, tf, activateCostWidth, lineHeight, maxWidth / 2 + costCenterX, activateCostY, lineSpacing);
+							DrawWordByWord(words, g, tf, textColor, activateCostWidth, lineHeight, maxWidth / 2 + costCenterX, activateCostY, lineSpacing);
 						}
 					}
 					currentY += actionSymbolLines * lineHeight;
@@ -253,7 +253,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					if (activateAbility != "")
 					{
 						words = GetCardWords(activateAbility, textColor, font, keywordsAndColors);
-						currentY = DrawWordByWord(words, g, tf, maxWidth, lineHeight, maxWidth / 2, currentY, lineSpacing);
+						currentY = DrawWordByWord(words, g, tf, textColor, maxWidth, lineHeight, maxWidth / 2, currentY, lineSpacing);
 					}
 				}
 				else // Otherwise, the activate ability is to the right of the symbol
@@ -269,7 +269,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					{
 						drawY += (activateAbilityHeight - MeasureWordByWord(words, tf, sideAAMaxW, lineHeight, lineSpacing).Height) / 2;
 					}
-					DrawWordByWord(words, g, tf, sideAAMaxW, lineHeight, maxWidth - sideAAMaxW / 2 - 30, drawY, lineSpacing);
+					DrawWordByWord(words, g, tf, textColor, sideAAMaxW, lineHeight, maxWidth - sideAAMaxW / 2 - 30, drawY, lineSpacing);
 					currentY += activateAbilityHeight;
 				}
 				currentY += lineHeight * paddingLines;
@@ -279,7 +279,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			if (gainsAction != "")
 			{
 				words = GetCardWords(gainsAction, textColor, font, keywordsAndColors);
-				DrawWordByWord(words, g, tf, maxWidth, lineHeight, maxWidth / 2, currentY, lineSpacing);
+				DrawWordByWord(words, g, tf, textColor, maxWidth, lineHeight, maxWidth / 2, currentY, lineSpacing);
 			}
 
 			g.Save();
@@ -344,7 +344,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			float startY = (maxHeight - textHeight) / 2;
 
 			// Draw type word by word
-			DrawWordByWord(words, g, tf, maxWidth, textHeight, maxWidth / 2, startY, 1.0F);
+			DrawWordByWord(words, g, tf, textColor, maxWidth, textHeight, maxWidth / 2, startY, 1.0F);
 
 			g.Save();
 			g.Dispose();
@@ -407,7 +407,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 			int startY = (maxHeight - textHeight) / 2;
 
 			// Draw corner element word by word
-			DrawWordByWord(words, g, tf, maxWidth, textHeight, maxWidth / 2, startY, 1.0F);
+			DrawWordByWord(words, g, tf, textColor, maxWidth, textHeight, maxWidth / 2, startY, 1.0F);
 
 			g.Save();
 			g.Dispose();
@@ -524,7 +524,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// <param name="startY">the y-position the first line should be drawn at</param>
 		/// <param name="lineSpacing">the ratio that determines how much line height to use</param>
 		/// <returns>the ending y-position</returns>
-		private static float DrawWordByWord(List<CardWord> words, Graphics g, TextFormatFlags tf, float maxWidth, float lineHeight, float centerX, float startY, float lineSpacing)
+		private static float DrawWordByWord(List<CardWord> words, Graphics g, TextFormatFlags tf, Color symbolColor, float maxWidth, float lineHeight, float centerX, float startY, float lineSpacing)
 		{
 			// Set up variables we'll potentially need
 			float lineBreakLines = float.Parse(ValueFetching.GetConfigValue("text", "lineBreakLines"));
@@ -676,7 +676,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 					Image asset = Image.FromFile(gainsSymbolPath);
 					float resizing = string.Equals(assetName, "DividingLine") || string.Equals(assetName, "DividingLine" + ValueFetching.GetConfigValue("asset", "alternateDesignation")) ? 1.0F : asLines * lineHeight / asset.Height;
 					float yOffset = string.Equals(assetName, "DividingLine") || string.Equals(assetName, "DividingLine" + ValueFetching.GetConfigValue("asset", "alternateDesignation")) ? dlLines * lineHeight / 2 : asLines * lineHeight / 2;
-					DrawSymbol(asset, g, color, maxWidth / 2, currentY + yOffset, resizing);
+					DrawSymbol(asset, g, symbolColor, maxWidth / 2, currentY + yOffset, resizing);
 
 					// If this was a Gain Power action, draw the amount to be gained
 					if (gainPowerAmt != "")
@@ -689,7 +689,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 							(int)maxWidth,
 							(int)(currentY + asLines * lineHeight / 2)
 						);
-						TextRenderer.DrawText(g, gainPowerAmt, gainPowerFont, gainPowerPos, color, tf);
+						TextRenderer.DrawText(g, gainPowerAmt, gainPowerFont, gainPowerPos, symbolColor, tf);
 					}
 					currentY += lineHeight * (string.Equals(assetName, "DividingLine") ? dlLines : asLines);
 					iCheck++;

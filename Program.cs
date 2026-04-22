@@ -75,7 +75,7 @@ class Program
             repeat = false;
 
             // Load all the keywords and their colors
-            Dictionary<string, string> keywordsAndColors = ValueFetching.GetColorMapping();
+            Dictionary<string, string> keywordsAndColors;
 
             // Go through each line of Cards.txt and build cards
             List<string> cardData = ValueFetching.GetTextFilesLines("Cards");
@@ -100,6 +100,7 @@ class Program
                     string deck = cardSplit[9];
                     string gainsAction = cardSplit[10];
 
+                    keywordsAndColors = ValueFetching.GetColorMapping(deck == "Fate");
                     bool skipCard = trackChanges && cardsToSkip.Contains(TextManipulation.CleanTitle(title));
                     // Skip cards that do not have all the necessary elements
                     if (!skipCard && title != "" && (ability != "" || activateAbility != "" || activateCost != "" || gainsAction != "") && type != "")

@@ -237,7 +237,7 @@ namespace ToonVil_Card_Generator.CardGeneration
 		/// Maps the keyword colors to each variation.
 		/// </summary>
 		/// <returns>a Dictionary containing each keyword and variation, including their colors</returns>
-		public static Dictionary<string, string> GetColorMapping()
+		public static Dictionary<string, string> GetColorMapping(bool fateDeck = false)
 		{
 			Dictionary<string, string> baseKeywordColors = [];
 			Dictionary<string, string> keywordsAndColors = [];
@@ -271,11 +271,11 @@ namespace ToonVil_Card_Generator.CardGeneration
 					{
 						if (!baseKeywordColors.TryGetValue(lineSplit[0], out string? value))
 						{
-							keywordsAndColors[variant] = ValueFetching.GetConfigValue("color", "fontColor");
+							keywordsAndColors[variant] = ValueFetching.GetConfigValue("color", fateDeck ? "fateFontColor" : "fontColor");
 						}
 						else
 						{
-							keywordsAndColors[variant] = value == "" ? ValueFetching.GetConfigValue("color", "fontColor") : value;
+							keywordsAndColors[variant] = value == "" ? ValueFetching.GetConfigValue("color", fateDeck ? "fateFontColor" : "fontColor") : value;
 						}
 					}
 				}
