@@ -57,3 +57,7 @@
 - multiple powerful settings introduced
 - increased line break utility
 - more feedback in general
+
+## v3.1
+- fate font color black, configurable
+- fate deck has black ornaments
